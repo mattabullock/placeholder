@@ -11,6 +11,7 @@
 #include <iostream>
 #include <boost/array.hpp>
 #include <boost/asio.hpp>
+#include <libssh/libsshpp.hpp>
 
 using boost::asio::ip::tcp;
 
