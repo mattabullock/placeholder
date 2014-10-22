@@ -1,7 +1,12 @@
 import socket
+import signal
+import sys
+def signal_handler(signal, frame):
+        print('You pressed Ctrl+C!')
+        sys.exit(0)
+signal.signal(signal.SIGINT, signal_handler)
 
-
-TCP_IP = '25.159.181.117'
+TCP_IP = 'localhost'
 TCP_PORT = 5715
 BUFFER_SIZE = 1024
 
