@@ -60,9 +60,9 @@ class Client:
 
     def screenshot(self):
         #TODO: Fill this in
-        ImageGrab.grab().save("C:\Users\Matt\Desktop\scrnsht.jpg", "JPEG")
+        ImageGrab.grab().save("C:\Users\Matt\Desktop\scrnsht.png", "png")
         # img = ImageGrab.grab()
-        f = open('C:\Users\matt\Desktop\scrnsht.jpg', 'rb')
+        f = open('C:\Users\matt\Desktop\scrnsht.png', 'rb')
         fread = f.read()
         f.close()
         size = str(len(fread))
