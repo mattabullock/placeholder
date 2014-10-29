@@ -24,7 +24,7 @@ def getSizeOfCommand(s):
         size += int(sizearray[i]) * pow(10,len(sizearray)-i-1)
     return size
 
-host = 'localhost' 
+host = '0.0.0.0' 
 port = 5715 
 backlog = 5
 size = 1
