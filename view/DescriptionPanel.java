@@ -15,4 +15,8 @@ public class DescriptionPanel extends JPanel {
     add(title);
   }
 
+  public void status(String string) {
+    JLabel label = new JLabel(string);
+    add(label);
+  }
 }

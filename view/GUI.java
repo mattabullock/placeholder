@@ -26,9 +26,11 @@ public class GUI extends JFrame {
   private static final double DESCRIPTION_PANEL_WIDTH = 0.4;
   
   private final Server server;
+  private final DescriptionPanel descriptionPanel;
   
   public GUI(Server server) {
     this.server = server;
+    server.setGui(this);
     
     setBackground(Color.GREEN);
     setLayout(new BoxLayout(getContentPane(), BoxLayout.Y_AXIS));
@@ -40,7 +42,7 @@ public class GUI extends JFrame {
     JMenuBar menuBar = new MenuBar();
     setJMenuBar(menuBar);
     
-    JPanel descriptionPanel = new DescriptionPanel();
+    descriptionPanel = new DescriptionPanel();
     JPanel actionPanel = new ActionPanel(server);
     JSplitPane mainPanel = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, descriptionPanel, actionPanel);
     mainPanel.setDividerSize(DIVIDER_SIZE);
@@ -53,4 +55,7 @@ public class GUI extends JFrame {
     getContentPane().add(consolePanel);
   }
 
+  public void status(String string) {
+    descriptionPanel.status(string);
+  }
 }
