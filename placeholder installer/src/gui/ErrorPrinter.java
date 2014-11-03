@@ -1,7 +1,5 @@
 package gui;
 
-import javax.swing.JOptionPane;
-
 public class ErrorPrinter
 {
 	public enum ErrorCode
@@ -62,7 +60,6 @@ public class ErrorPrinter
             	message = "An unknown error has occured: " + additional;
                 break;
         }
-		//JOptionPane.showMessageDialog(null, message);
 		System.out.println(message);
         System.exit(0);
 	}
