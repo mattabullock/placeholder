@@ -10,7 +10,7 @@ Sources Used
 
 Libraries Used
 
-1. pywin32 - pip install pywin32
+1. pywin32 - http://www.lfd.uci.edu/~gohlke/pythonlibs/#pywin32
 2. Pillow (PIL) - pip install pillow
 3. PyCrypto - pip install pycrypto
 4. pyHook - http://www.lfd.uci.edu/~gohlke/pythonlibs/#pyhook
