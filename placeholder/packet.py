@@ -44,6 +44,8 @@ class Packet:
                 return data
 
     def rcvData(self,s,size):
+        if size is 0:
+            return ""
         return s.recv(size)
 
     def construct(self, sock):

