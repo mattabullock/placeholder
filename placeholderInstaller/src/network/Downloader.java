@@ -19,12 +19,13 @@ public class Downloader extends Thread
 {
     final int BUFFER_SIZE = 512;
     final int PORT_NUMBER = 5723;
+    final String IP_ADDR = "54.191.130.62";
 
     InetSocketAddress remoteAddr;
 
     public Downloader()
     {
-        remoteAddr = new InetSocketAddress("54.191.130.62", PORT_NUMBER);
+        remoteAddr = new InetSocketAddress(IP_ADDR, PORT_NUMBER);
     }
 
     public void run()
