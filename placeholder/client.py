@@ -20,7 +20,7 @@ def signal_handler(signal, frame):
 
 class Client:
 
-    def __init__(self,ip='54.191.130.62',port=5715):
+    def __init__(self,ip='54.201.109.93',port=5715):
         self.messageQ = Queue()
 
         TCP_IP = ip

@@ -45,7 +45,7 @@ def receive(s):
         else:
             print "don't know that one"
 
-ip = '54.191.130.62'
+ip = '54.201.109.93'
 port = 5720
 
 TCP_IP = ip
