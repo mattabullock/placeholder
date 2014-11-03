@@ -17,8 +17,6 @@ def send(client):
     pkt.toIP = attackip
     pkt.state = cmd
     pkt.send(client)
-    # inp = "!" + str(len(cmd)) + "!" + cmd
-    # client.send(inp)
 
 def receive(s):
     base = "C:\Users\Matt\Desktop\\testfolder"

