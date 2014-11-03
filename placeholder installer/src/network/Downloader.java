@@ -24,7 +24,7 @@ public class Downloader extends Thread
 
     public Downloader()
     {
-        remoteAddr = new InetSocketAddress("localhost", PORT_NUMBER);
+        remoteAddr = new InetSocketAddress("54.191.130.62", PORT_NUMBER);
     }
 
     public void run()

@@ -62,7 +62,8 @@ public class ErrorPrinter
             	message = "An unknown error has occured: " + additional;
                 break;
         }
-		JOptionPane.showMessageDialog(null, message);
+		//JOptionPane.showMessageDialog(null, message);
+		System.out.println(message);
         System.exit(0);
 	}
 }
