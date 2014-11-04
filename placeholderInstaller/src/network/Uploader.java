@@ -41,7 +41,10 @@ public class Uploader extends Thread
             // Load the manifest file
             File manifest = new File(UploaderMain.getManifestName());
             if (!manifest.exists())
+            {
                 ErrorPrinter.printError(ErrorCode.fileNotFound, "manifest does not exist");
+                System.exit(0);
+            }
 
             // Read names of files from manifest
             Map<String, File> files = new HashMap<String, File>();
@@ -55,8 +58,11 @@ public class Uploader extends Thread
                 String destinationName = token.nextToken();
                 String localName = token.nextToken();
                 File f = new File(localName);
-                if (!f.exists()) ErrorPrinter.printError(ErrorCode.fileNotFound,
-                        "file " + localName + " not found");
+                if (!f.exists())
+                {
+                	ErrorPrinter.printError(ErrorCode.fileNotFound, "file " + localName + " not found");
+                	continue;
+                }
                 totalLength += f.length();
                 files.put(destinationName, f);
             }

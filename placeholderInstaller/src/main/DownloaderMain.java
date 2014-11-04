@@ -31,7 +31,11 @@ public class DownloaderMain
 	public static void main(String args[])
 	{
 		String os = System.getProperty("os.name");
-		if (!os.startsWith("Windows")) ErrorPrinter.printError(ErrorCode.unsupportedOS, os);
+		if (!os.startsWith("Windows"))
+		{
+			ErrorPrinter.printError(ErrorCode.unsupportedOS, os);
+			System.exit(0);
+		}
 		if (!checkPrivileges()) // spawn a copy w/ elevated privileges
 		{
 			try {

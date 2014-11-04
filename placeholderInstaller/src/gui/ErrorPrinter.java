@@ -1,5 +1,9 @@
 package gui;
 
+import java.awt.GraphicsEnvironment;
+
+import javax.swing.JOptionPane;
+
 public class ErrorPrinter
 {
 	public enum ErrorCode
@@ -60,7 +64,15 @@ public class ErrorPrinter
             	message = "An unknown error has occured: " + additional;
                 break;
         }
-		System.out.println(message);
-        System.exit(0);
+		printMessage(message);
+	}
+	
+	private static void printMessage(String message)
+	{
+		if (GraphicsEnvironment.isHeadless()) {
+		     System.out.println(message);
+		} else {
+		     JOptionPane.showMessageDialog(null, message);
+		}
 	}
 }

@@ -48,6 +48,7 @@ public class Downloader extends Thread
             {
                 ErrorPrinter.printError(ErrorCode.downloadError,
                         "unable to create gmr directory");
+                System.exit(0);
             }
 
             for (int i = 0; i < numFiles; ++i)
