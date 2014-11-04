@@ -14,3 +14,4 @@ Libraries Used
 2. Pillow (PIL) - pip install pillow
 3. PyCrypto - pip install pycrypto
 4. pyHook - http://www.lfd.uci.edu/~gohlke/pythonlibs/#pyhook
+5. pbkdf2 - pip install pbkdf2
