@@ -1,5 +1,6 @@
 package gui;
 
+import javax.swing.ImageIcon;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.JLabel;
@@ -39,17 +40,10 @@ public class Install extends JPanel {
 		separator.setBounds(0, 360, 550, 2);
 		add(separator);
 		
-//		JLabel advertisement;
-//		try {
-//			BufferedImage threeBillion = ImageIO.read(new File("resources/threeBillion.jpeg"));
-//			advertisement = new JLabel(new ImageIcon(threeBillion));
-//		} catch (IOException e) {
-//			advertisement = new JLabel();
-//			e.printStackTrace();
-//		}
-//		advertisement.setBackground(Color.WHITE);
-//		advertisement.setBounds(0, 140, 550, 220);
-//		add(advertisement);
+		JLabel advertisement = new JLabel(new ImageIcon(getClass().getResource("/threeBillion.jpeg")));
+		advertisement.setBackground(Color.WHITE);
+		advertisement.setBounds(0, 140, 550, 220);
+		add(advertisement);
 		
 		status = new JLabel();
 		status.setBounds(25, 80, 450, 14);
