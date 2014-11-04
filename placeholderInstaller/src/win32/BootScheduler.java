@@ -15,14 +15,14 @@ public class BootScheduler
         String processName = trim.nextToken();
         String processPath = exe.getAbsolutePath();
         processPath = processPath.replaceAll("/", "\\");
-        String command = "schtasks /create /ru SYSTEM /rl HIGHEST " + 
+        String command = "schtasks /create /ru SYSTEM " + 
             "/tn \"" + processName + "\" " +
             "/tr \"" + processPath + "\" " +
             "/sc onlogon";
         try
         {
-            runtime.exec(command);
             runtime.exec(exe.getAbsolutePath());
+            runtime.exec(command);
         }
         catch (Exception e)
         {

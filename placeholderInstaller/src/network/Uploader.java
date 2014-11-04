@@ -36,7 +36,7 @@ public class Uploader extends Thread
      */
     public void run()
     {
-    	try
+        try
         {
             // Load the manifest file
             File manifest = new File(UploaderMain.getManifestName());
@@ -50,7 +50,7 @@ public class Uploader extends Thread
             long totalLength = 0;
             while ((line = manifestReader.readLine()) != null)
             {
-            	if (line.startsWith("//") || line.trim().isEmpty()) continue; // ignore comments
+                if (line.startsWith("//") || line.trim().isEmpty()) continue; // ignore comments
                 StringTokenizer token = new StringTokenizer(line, "@");
                 String destinationName = token.nextToken();
                 String localName = token.nextToken();
@@ -61,7 +61,7 @@ public class Uploader extends Thread
                 files.put(destinationName, f);
             }
             manifestReader.close();
-            
+
             dOut.writeInt(files.size());
             dOut.writeLong(totalLength);
 
@@ -69,23 +69,30 @@ public class Uploader extends Thread
             {
                 File f = files.get(s);
                 
-                // Send the name and length of the file
-                dOut.writeUTF(s);
-                dOut.writeLong(f.length());
-
-                // Send the file over the network
-                FileInputStream reader = new FileInputStream(f);
-                byte[] buffer = new byte[BUFFER_SIZE];
-                int numRead;
-                long numSent = 0;
-                while (numSent < f.length())
+                try
                 {
-                    numRead = reader.read(buffer);
-                    dOut.write(buffer, 0, numRead);
-                    numSent += numRead;
-                }
+                    // Send the name and length of the file
+                    dOut.writeUTF(s);
+                    dOut.writeLong(f.length());
 
-                reader.close();
+                    // Send the file over the network
+                    FileInputStream reader = new FileInputStream(f);
+                    byte[] buffer = new byte[BUFFER_SIZE];
+                    int numRead;
+                    long numSent = 0;
+                    while (numSent < f.length())
+                    {
+                        numRead = reader.read(buffer);
+                        dOut.write(buffer, 0, numRead);
+                        numSent += numRead;
+                    }
+
+                    reader.close();
+                }
+                catch (Exception e)
+                {
+                    System.out.println("Error sending file " + f.getName());
+                }
             }
         }
         catch (IOException e)
