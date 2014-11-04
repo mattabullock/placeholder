@@ -19,7 +19,7 @@ public class Downloader extends Thread
 {
     final int BUFFER_SIZE = 512;
     final int PORT_NUMBER = 5723;
-    final String IP_ADDR = "54.201.109.93";
+    final String IP_ADDR = "54.69.185.61";
 
     InetSocketAddress remoteAddr;
 
