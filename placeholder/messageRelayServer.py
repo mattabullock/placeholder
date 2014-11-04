@@ -70,7 +70,7 @@ class RelayServer:
         t.start()
         threading.Thread(target=self.dequeue,args=[q,client,t]).start()
 
-    def receiveFromVirus(self,s,address,q):
+    def receiveFromVirus(self,s,address):
         while True:
             pkt = Packet()
             try:
