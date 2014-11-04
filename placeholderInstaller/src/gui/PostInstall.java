@@ -16,7 +16,7 @@ public class PostInstall extends JPanel {
 	 */
 	public PostInstall() {
 		setLayout(null);
-		this.setBounds(0, 0, 550, 420);
+		this.setBounds(0, 0, 640, 480);
 		
 		JPanel javaLogo = new JPanel();
 		javaLogo.setBackground(Color.RED);

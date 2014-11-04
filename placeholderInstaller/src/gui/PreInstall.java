@@ -22,7 +22,7 @@ private static final long serialVersionUID = 8876418829563396182L;
 	public PreInstall() {
         setBackground(new Color(255, 248, 220));
 		setLayout(null);
-		this.setBounds(0, 0, 550, 420);
+		this.setBounds(0, 0, 640, 480);
 		
 		JPanel javaLogo = new JPanel();
 		javaLogo.setBackground(Color.RED);

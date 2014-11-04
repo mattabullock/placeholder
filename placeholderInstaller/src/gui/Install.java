@@ -21,7 +21,7 @@ public class Install extends JPanel {
 	 */
 	public Install() {
 		setLayout(null);
-		this.setBounds(0, 0, 550, 420);
+		this.setBounds(0, 0, 640, 480);
 		
 		fileProgressBar = new JProgressBar(0, 1000);
 		fileProgressBar.setBounds(25, 100, 450, 15);
