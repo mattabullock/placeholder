@@ -24,25 +24,25 @@ public class Install extends JPanel {
 		this.setBounds(0, 0, 640, 480);
 		
 		fileProgressBar = new JProgressBar(0, 1000);
-		fileProgressBar.setBounds(25, 100, 450, 15);
+		fileProgressBar.setBounds(10, 113, 618, 15);
 		add(fileProgressBar);
 		
 		totalProgressBar = new JProgressBar(0, 1000);
-		totalProgressBar.setBounds(25, 120, 450, 15);
+		totalProgressBar.setBounds(10, 141, 618, 15);
 		add(totalProgressBar);
 		
 		JPanel javaLogo = new JPanel();
 		javaLogo.setBackground(Color.RED);
-		javaLogo.setBounds(0, 0, 550, 70);
+		javaLogo.setBounds(0, 0, 640, 100);
 		add(javaLogo);
 		
 		JSeparator separator = new JSeparator();
-		separator.setBounds(0, 360, 550, 2);
+		separator.setBounds(0, 420, 640, 2);
 		add(separator);
 		
 		JLabel advertisement = new JLabel(new ImageIcon(getClass().getResource("/threeBillion.jpeg")));
 		advertisement.setBackground(Color.WHITE);
-		advertisement.setBounds(0, 140, 550, 220);
+		advertisement.setBounds(0, 169, 640, 250);
 		add(advertisement);
 		
 		status = new JLabel();

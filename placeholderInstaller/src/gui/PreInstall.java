@@ -26,11 +26,11 @@ private static final long serialVersionUID = 8876418829563396182L;
 		
 		JPanel javaLogo = new JPanel();
 		javaLogo.setBackground(Color.RED);
-		javaLogo.setBounds(0, 0, 550, 70);
+		javaLogo.setBounds(0, 0, 640, 100);
 		add(javaLogo);
 		
 		JButton acceptButton = new JButton("Install >");
-		acceptButton.setBounds(449, 352, 89, 23);
+		acceptButton.setBounds(538, 403, 89, 23);
 		acceptButton.addActionListener(new ActionListener()
 		{
 			public void actionPerformed(ActionEvent e)
@@ -42,7 +42,7 @@ private static final long serialVersionUID = 8876418829563396182L;
 		add(acceptButton);
 		
 		JButton cancelButton = new JButton("Cancel");
-		cancelButton.setBounds(348, 352, 89, 23);
+		cancelButton.setBounds(437, 403, 89, 23);
 		cancelButton.addActionListener(new ActionListener()
 		{
 			public void actionPerformed(ActionEvent e)
@@ -56,12 +56,12 @@ private static final long serialVersionUID = 8876418829563396182L;
 		JLabel lblWelcomeToJava = new JLabel("Welcome to Java");
 		lblWelcomeToJava.setHorizontalAlignment(SwingConstants.CENTER);
 		lblWelcomeToJava.setFont(new Font("Tahoma", Font.BOLD, 18));
-		lblWelcomeToJava.setBounds(175, 83, 200, 23);
+		lblWelcomeToJava.setBounds(220, 120, 200, 23);
 		add(lblWelcomeToJava);
 		
 		JPanel panel = new JPanel();
 		panel.setBackground(Color.WHITE);
-		panel.setBounds(0, 119, 550, 220);
+		panel.setBounds(0, 170, 640, 220);
 		add(panel);
 		panel.setLayout(null);
 		
@@ -84,7 +84,7 @@ private static final long serialVersionUID = 8876418829563396182L;
 		lblJavaProvidesSafe.setFont(new Font("Tahoma", Font.PLAIN, 14));
 		lblJavaProvidesSafe.setHorizontalAlignment(SwingConstants.CENTER);
 		lblJavaProvidesSafe.setVerticalAlignment(SwingConstants.TOP);
-		lblJavaProvidesSafe.setBounds(12, 13, 526, 226);
+		lblJavaProvidesSafe.setBounds(12, 0, 616, 220);
 		panel.add(lblJavaProvidesSafe);
 	}
 }

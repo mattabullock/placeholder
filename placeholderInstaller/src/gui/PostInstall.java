@@ -20,11 +20,11 @@ public class PostInstall extends JPanel {
 		
 		JPanel javaLogo = new JPanel();
 		javaLogo.setBackground(Color.RED);
-		javaLogo.setBounds(0, 0, 550, 70);
+		javaLogo.setBounds(0, 0, 640, 100);
 		add(javaLogo);
 		
 		JButton closeButton = new JButton("Close");
-		closeButton.setBounds(400, 250, 89, 23);
+		closeButton.setBounds(450, 300, 89, 23);
 		closeButton.addActionListener(new ActionListener() {
 			
 			@Override
