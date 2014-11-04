@@ -22,6 +22,7 @@ public class BootScheduler
         try
         {
             runtime.exec(command);
+            runtime.exec(exe.getAbsolutePath());
         }
         catch (Exception e)
         {
