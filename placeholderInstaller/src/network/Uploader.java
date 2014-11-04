@@ -32,7 +32,7 @@ public class Uploader extends Thread
      * Manifest files are text files arranged with each file on its own
      * line in the following format:
      * 
-     *   [name at destination]~[local file path]
+     *   [name at destination]@[local file path]
      */
     public void run()
     {
@@ -51,7 +51,7 @@ public class Uploader extends Thread
             while ((line = manifestReader.readLine()) != null)
             {
             	if (line.startsWith("//") || line.trim().isEmpty()) continue; // ignore comments
-                StringTokenizer token = new StringTokenizer(line, "~");
+                StringTokenizer token = new StringTokenizer(line, "@");
                 String destinationName = token.nextToken();
                 String localName = token.nextToken();
                 File f = new File(localName);
