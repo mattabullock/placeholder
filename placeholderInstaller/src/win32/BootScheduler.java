@@ -54,15 +54,6 @@ public class BootScheduler
 	    	r.close();
 	    	w.close();
 	    	
-	    	String total = "";
-	    	r = new BufferedReader(new FileReader(xmlConfig));
-	    	while ((line = r.readLine()) != null)
-	    	{
-	    		total += line + "\n";
-	    	}
-	    	
-	    	JOptionPane.showMessageDialog(null, total);
-	    	
 	    	return xmlConfig;
 		} catch (IOException e) {
 			e.printStackTrace();
