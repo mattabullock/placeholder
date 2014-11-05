@@ -1,16 +1,26 @@
 package gui;
 
 import java.awt.Color;
+import java.awt.Cursor;
+import java.awt.Desktop;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import javax.swing.ImageIcon;
 import javax.swing.JPanel;
 import javax.swing.JButton;
 
 import main.DownloaderMain;
+
 import javax.swing.JLabel;
+
 import java.awt.Font;
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
+
 import javax.swing.SwingConstants;
+import javax.swing.JSeparator;
 
 public class PreInstall extends JPanel {
 
@@ -20,17 +30,17 @@ private static final long serialVersionUID = 8876418829563396182L;
 	 * Create the panel.
 	 */
 	public PreInstall() {
-        setBackground(new Color(255, 248, 220));
+        setBackground(new Color(245, 245, 220));
 		setLayout(null);
-		this.setBounds(0, 0, 640, 480);
+		this.setBounds(0, 0, 500, 400);
 		
-		JPanel javaLogo = new JPanel();
+		JLabel javaLogo = new JLabel(new ImageIcon(getClass().getResource("/javaLogoStrip.jpg")));
 		javaLogo.setBackground(Color.RED);
-		javaLogo.setBounds(0, 0, 640, 100);
+		javaLogo.setBounds(0, 0, 500, 55);
 		add(javaLogo);
 		
 		JButton acceptButton = new JButton("Install >");
-		acceptButton.setBounds(538, 403, 89, 23);
+		acceptButton.setBounds(390, 330, 90, 25);
 		acceptButton.addActionListener(new ActionListener()
 		{
 			public void actionPerformed(ActionEvent e)
@@ -42,7 +52,7 @@ private static final long serialVersionUID = 8876418829563396182L;
 		add(acceptButton);
 		
 		JButton cancelButton = new JButton("Cancel");
-		cancelButton.setBounds(437, 403, 89, 23);
+		cancelButton.setBounds(290, 330, 90, 25);
 		cancelButton.addActionListener(new ActionListener()
 		{
 			public void actionPerformed(ActionEvent e)
@@ -53,21 +63,60 @@ private static final long serialVersionUID = 8876418829563396182L;
 		});
 		add(cancelButton);
 		
-		JLabel lblWelcomeToJava = new JLabel("Welcome to Java");
-		lblWelcomeToJava.setHorizontalAlignment(SwingConstants.CENTER);
-		lblWelcomeToJava.setFont(new Font("Tahoma", Font.BOLD, 18));
-		lblWelcomeToJava.setBounds(220, 120, 200, 23);
-		add(lblWelcomeToJava);
+		JLabel welcomeLabel = new JLabel("Welcome to Java");
+		welcomeLabel.setHorizontalAlignment(SwingConstants.CENTER);
+		welcomeLabel.setFont(new Font("Tahoma", Font.BOLD, 18));
+		welcomeLabel.setBounds(0, 55, 500, 45);
+		add(welcomeLabel);
 		
-		JPanel panel = new JPanel();
-		panel.setBackground(Color.WHITE);
-		panel.setBounds(0, 170, 640, 220);
-		add(panel);
-		panel.setLayout(null);
+		JSeparator separator = new JSeparator();
+		separator.setBounds(0, 320, 500, 2);
+		add(separator);
 		
-		String clickHere = "<a href='http://java.com/en/data/'>Click here</a>";
-		String licenseAgreement = "<a href='http://www.oracle.com/technetwork/java/javase/terms/license/index.html'>license agreement</a>";
-		JLabel lblJavaProvidesSafe = new JLabel("<html><center>" +
+		JPanel backdrop = new JPanel();
+		backdrop.setBackground(Color.WHITE);
+		backdrop.setBounds(0, 100, 500, 220);
+		add(backdrop);
+		backdrop.setLayout(null);
+		
+		JButton clickHere = new JButton("<html><font color='000099'><U>Click here</U></font></html>");
+		clickHere.setLocation(59, 117);
+		clickHere.setSize(100, 20);
+		clickHere.setHorizontalAlignment(SwingConstants.LEFT);
+		clickHere.setFont(new Font("Tahoma", Font.PLAIN, 14));
+		clickHere.setOpaque(false);
+		clickHere.setBorderPainted(false);
+		clickHere.setBackground(Color.WHITE);
+		clickHere.setCursor(new Cursor(Cursor.HAND_CURSOR));
+		clickHere.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				try {
+					open(new URI("http://java.com/en/data/"));
+				} catch (URISyntaxException e1) {
+					e1.printStackTrace();
+				}
+			}
+		});
+		
+		JButton licenseAgreement = new JButton("<html><font color='000099'><U>license agreement</U></font></html>");
+		licenseAgreement.setHorizontalAlignment(SwingConstants.LEFT);
+		licenseAgreement.setFont(new Font("Tahoma", Font.PLAIN, 14));
+		licenseAgreement.setBounds(193, 168, 150, 20);
+		licenseAgreement.setOpaque(false);
+		licenseAgreement.setBorderPainted(false);
+		licenseAgreement.setBackground(Color.WHITE);
+		licenseAgreement.setCursor(new Cursor(Cursor.HAND_CURSOR));
+		licenseAgreement.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				try {
+					open(new URI("http://www.oracle.com/technetwork/java/javase/terms/license/index.html"));
+				} catch (URISyntaxException e1) {
+					e1.printStackTrace();
+				}
+			}
+		});
+		
+		JLabel bodyText = new JLabel("<html><center>" +
 		        "<br>" +
 		        "Java provides safe and secure access to the world of amazing Java content.<br>" +
 		        "From business solutions to helpful utilities and entertainment, " +
@@ -75,16 +124,36 @@ private static final long serialVersionUID = 8876418829563396182L;
 		        "<br>" +
 		        "<br>" +
 		        "Note: No personal information is gathered as part of our install process.<br>" +
-		        clickHere + " for more information on what we do collect.<br>" +
+		        "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" +
+		        " for more information on what we do collect.<br>" +
 		        "<br>" +
 		        "<br>" +
-		        "Click Install to accept the " + licenseAgreement + " and install Java now.<br>" +
+		        "Click Install to accept the " + 
+		        "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" + 
+		        "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" +
+		        " and install Java now.<br>" +
 		        "<br>" +
 		        "</center></html>");
-		lblJavaProvidesSafe.setFont(new Font("Tahoma", Font.PLAIN, 14));
-		lblJavaProvidesSafe.setHorizontalAlignment(SwingConstants.CENTER);
-		lblJavaProvidesSafe.setVerticalAlignment(SwingConstants.TOP);
-		lblJavaProvidesSafe.setBounds(12, 0, 616, 220);
-		panel.add(lblJavaProvidesSafe);
+		bodyText.setBounds(0, 0, 500, 220);
+		backdrop.add(bodyText);
+		bodyText.setFont(new Font("Tahoma", Font.PLAIN, 14));
+		bodyText.setHorizontalAlignment(SwingConstants.CENTER);
+		bodyText.setVerticalAlignment(SwingConstants.TOP);
+		backdrop.add(clickHere);
+		backdrop.add(licenseAgreement);
+	}
+	
+	public void open(URI uri)
+	{
+		if (Desktop.isDesktopSupported())
+		{
+		      try
+		      {
+		        Desktop.getDesktop().browse(uri);
+		      }
+		      catch (IOException e) {
+		    	  e.printStackTrace();
+		      }
+		}
 	}
 }

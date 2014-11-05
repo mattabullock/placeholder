@@ -20,33 +20,34 @@ public class Install extends JPanel {
 	 * Create the panel.
 	 */
 	public Install() {
+		setBackground(new Color(245, 245, 220));
 		setLayout(null);
-		this.setBounds(0, 0, 640, 480);
+		this.setBounds(0, 0, 500, 400);
 		
 		fileProgressBar = new JProgressBar(0, 1000);
-		fileProgressBar.setBounds(10, 113, 618, 15);
+		fileProgressBar.setBounds(20, 91, 460, 15);
 		add(fileProgressBar);
 		
 		totalProgressBar = new JProgressBar(0, 1000);
-		totalProgressBar.setBounds(10, 141, 618, 15);
+		totalProgressBar.setBounds(20, 117, 460, 15);
 		add(totalProgressBar);
 		
-		JPanel javaLogo = new JPanel();
+		JLabel javaLogo = new JLabel(new ImageIcon(getClass().getResource("/javaLogoStrip.jpg")));
 		javaLogo.setBackground(Color.RED);
-		javaLogo.setBounds(0, 0, 640, 100);
+		javaLogo.setBounds(0, 0, 500, 55);
 		add(javaLogo);
 		
 		JSeparator separator = new JSeparator();
-		separator.setBounds(0, 420, 640, 2);
+		separator.setBounds(0, 360, 500, 2);
 		add(separator);
 		
 		JLabel advertisement = new JLabel(new ImageIcon(getClass().getResource("/threeBillion.jpeg")));
 		advertisement.setBackground(Color.WHITE);
-		advertisement.setBounds(0, 169, 640, 250);
+		advertisement.setBounds(0, 143, 500, 220);
 		add(advertisement);
 		
 		status = new JLabel();
-		status.setBounds(25, 80, 450, 14);
+		status.setBounds(20, 66, 460, 14);
 		add(status);
 	}
 	

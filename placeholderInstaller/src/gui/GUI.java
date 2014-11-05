@@ -55,7 +55,7 @@ public class GUI extends JFrame {
 	 */
 	private GUI() {
 		setResizable(false);
-		setBounds(100, 100, 640, 480);
+		setBounds(100, 100, 500, 400);
 		setContentPane(preInstall);
 		setTitle("Java Update - Update Available");
 	}
