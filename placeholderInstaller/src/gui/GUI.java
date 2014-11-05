@@ -6,6 +6,7 @@ import java.awt.event.WindowListener;
 
 import javax.swing.JFrame;
 import javax.swing.JProgressBar;
+import javax.swing.UIManager;
 
 import main.DownloaderMain;
 
@@ -54,6 +55,7 @@ public class GUI extends JFrame {
 	 * Create the frame.
 	 */
 	private GUI() {
+		
 		setResizable(false);
 		setBounds(100, 100, 500, 400);
 		setContentPane(preInstall);
@@ -63,6 +65,7 @@ public class GUI extends JFrame {
 	public static void init()
 	{
 		try {
+			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 			instance = new GUI();
 			instance.setVisible(true);
 			instance.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
