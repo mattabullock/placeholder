@@ -20,7 +20,7 @@ public class Install extends JPanel {
 	 * Create the panel.
 	 */
 	public Install() {
-		setBackground(new Color(245, 245, 220));
+		setBackground(new Color(230, 230, 210));
 		setLayout(null);
 		this.setBounds(0, 0, 500, 400);
 		

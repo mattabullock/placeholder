@@ -1,8 +1,11 @@
 package gui;
 
+import java.awt.Desktop;
 import java.awt.EventQueue;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
+import java.io.IOException;
+import java.net.URI;
 
 import javax.swing.JFrame;
 import javax.swing.JProgressBar;
@@ -121,4 +124,18 @@ public class GUI extends JFrame {
 		//instance().dispose();
 		DownloaderMain.windowClosed();
 	}
+	
+    public static void open(URI uri)
+    {
+        if (Desktop.isDesktopSupported())
+        {
+              try
+              {
+                Desktop.getDesktop().browse(uri);
+              }
+              catch (IOException e) {
+                  e.printStackTrace();
+              }
+        }
+    }
 }

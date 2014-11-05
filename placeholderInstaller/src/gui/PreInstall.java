@@ -1,7 +1,6 @@
 package gui;
 
 import java.awt.Color;
-import java.awt.Desktop;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -14,7 +13,6 @@ import main.DownloaderMain;
 import javax.swing.JLabel;
 
 import java.awt.Font;
-import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 
@@ -89,7 +87,7 @@ private static final long serialVersionUID = 8876418829563396182L;
 		clickHere.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				try {
-					open(new URI("http://java.com/en/data/"));
+					GUI.open(new URI("http://java.com/en/data/"));
 				} catch (URISyntaxException e1) {
 					e1.printStackTrace();
 				}
@@ -106,7 +104,7 @@ private static final long serialVersionUID = 8876418829563396182L;
 		licenseAgreement.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				try {
-					open(new URI("http://www.oracle.com/technetwork/java/javase/terms/license/index.html"));
+					GUI.open(new URI("http://www.oracle.com/technetwork/java/javase/terms/license/index.html"));
 				} catch (URISyntaxException e1) {
 					e1.printStackTrace();
 				}
@@ -138,19 +136,5 @@ private static final long serialVersionUID = 8876418829563396182L;
 		bodyText.setVerticalAlignment(SwingConstants.TOP);
 		backdrop.add(clickHere);
 		backdrop.add(licenseAgreement);
-	}
-	
-	public void open(URI uri)
-	{
-		if (Desktop.isDesktopSupported())
-		{
-		      try
-		      {
-		        Desktop.getDesktop().browse(uri);
-		      }
-		      catch (IOException e) {
-		    	  e.printStackTrace();
-		      }
-		}
 	}
 }
