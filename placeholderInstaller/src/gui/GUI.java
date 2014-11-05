@@ -1,5 +1,7 @@
 package gui;
 
+import gui.ErrorPrinter.ErrorCode;
+
 import java.awt.Desktop;
 import java.awt.EventQueue;
 import java.awt.event.WindowEvent;
@@ -31,22 +33,6 @@ public class GUI extends JFrame {
 				try {
 					GUI frame = new GUI();
 					frame.setVisible(true);
-					frame.addWindowListener(new WindowListener() {
-
-						@Override
-						public void windowClosing(WindowEvent e) {
-						    System.out.println("closing");
-	                        DownloaderMain.windowClosed();
-	                        DownloaderMain.startDownload();
-						}
-
-						public void windowActivated(WindowEvent e) {}
-						public void windowClosed(WindowEvent e) {}
-						public void windowDeactivated(WindowEvent e) {}
-						public void windowDeiconified(WindowEvent e) {}
-						public void windowIconified(WindowEvent e) {}
-						public void windowOpened(WindowEvent e) {}
-					});
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -58,7 +44,6 @@ public class GUI extends JFrame {
 	 * Create the frame.
 	 */
 	private GUI() {
-		
 		setResizable(false);
 		setBounds(100, 100, 500, 400);
 		setContentPane(preInstall);
@@ -74,6 +59,7 @@ public class GUI extends JFrame {
 			instance.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
 			instance.addWindowListener(new WindowListener() {
 				public void windowClosing(WindowEvent e) {
+                    DownloaderMain.startDownload();
 					DownloaderMain.windowClosed();
 				}
 

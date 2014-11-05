@@ -38,7 +38,7 @@ public class Install extends JPanel {
 		add(javaLogo);
 		
 		JSeparator separator = new JSeparator();
-		separator.setBounds(0, 360, 500, 2);
+		separator.setBounds(0, 364, 500, 2);
 		add(separator);
 		
 		JLabel advertisement = new JLabel(new ImageIcon(getClass().getResource("/threeBillion.jpeg")));
