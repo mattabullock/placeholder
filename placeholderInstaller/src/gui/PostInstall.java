@@ -58,7 +58,14 @@ public class PostInstall extends JPanel {
 		add(backdrop);
 		backdrop.setLayout(null);
 		
-		JLabel bodyText = new JLabel("There will be actual text here once I get it together and figure out what the text is supposed to look like.");
+		JLabel bodyText = new JLabel("<html><center>" +
+				"<br>" +
+				"There will be actual text here once I get it together and figure out what the text is supposed to look like.<br>" +
+				"<br>" +
+				"<br>" +
+				"It'll be good.<br>" +
+				"</center></html>");
+		bodyText.setVerticalAlignment(SwingConstants.TOP);
 		bodyText.setFont(new Font("Tahoma", Font.PLAIN, 14));
 		bodyText.setBounds(0, 0, 500, 220);
 		backdrop.add(bodyText);

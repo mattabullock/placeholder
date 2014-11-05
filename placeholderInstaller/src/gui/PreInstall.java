@@ -1,7 +1,6 @@
 package gui;
 
 import java.awt.Color;
-import java.awt.Cursor;
 import java.awt.Desktop;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -87,7 +86,6 @@ private static final long serialVersionUID = 8876418829563396182L;
 		clickHere.setOpaque(false);
 		clickHere.setBorderPainted(false);
 		clickHere.setBackground(Color.WHITE);
-		clickHere.setCursor(new Cursor(Cursor.HAND_CURSOR));
 		clickHere.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				try {
@@ -105,7 +103,6 @@ private static final long serialVersionUID = 8876418829563396182L;
 		licenseAgreement.setOpaque(false);
 		licenseAgreement.setBorderPainted(false);
 		licenseAgreement.setBackground(Color.WHITE);
-		licenseAgreement.setCursor(new Cursor(Cursor.HAND_CURSOR));
 		licenseAgreement.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				try {
