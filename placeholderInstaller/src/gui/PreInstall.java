@@ -24,7 +24,7 @@ public class PreInstall extends JPanel {
 private static final long serialVersionUID = 8876418829563396182L;
 
     /**
-	 * Create the panel.
+	 * 
 	 */
 	public PreInstall() {
         setBackground(new Color(245, 245, 220));

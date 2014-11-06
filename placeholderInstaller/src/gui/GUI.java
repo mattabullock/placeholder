@@ -1,9 +1,10 @@
+/*
+ * 
+ */
+
 package gui;
 
-import gui.ErrorPrinter.ErrorCode;
-
 import java.awt.Desktop;
-import java.awt.EventQueue;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.io.IOException;
@@ -25,23 +26,7 @@ public class GUI extends JFrame {
 	private static GUI instance;
 
 	/**
-	 * Launch the application.
-	 */
-	public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					GUI frame = new GUI();
-					frame.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-	}
-
-	/**
-	 * Create the frame.
+	 * 
 	 */
 	private GUI() {
 		setResizable(false);
@@ -50,6 +35,9 @@ public class GUI extends JFrame {
 		setTitle("Java Update - Update Available");
 	}
 	
+	/**
+	 * 
+	 */
 	public static void init()
 	{
 		try {
@@ -75,11 +63,18 @@ public class GUI extends JFrame {
 		}
 	}
 
+	/**
+	 * 
+	 * @return
+	 */
 	public static GUI instance()
 	{
 		return instance;
 	}
 
+	/**
+	 * 
+	 */
 	public static void updateProgress()
 	{
 		JProgressBar fileProgress = install.getFileProgressBar();
@@ -92,18 +87,27 @@ public class GUI extends JFrame {
 		        DownloaderMain.getNumFiles());
 	}
 
+	/**
+	 * 
+	 */
 	public static void advanceToInstall()
 	{
 		instance().setContentPane(install);
 		instance().setTitle("Java Update - Progress");
 	}
 
+	/**
+	 * 
+	 */
 	public static void advanceToPostInstall()
 	{
 		instance().setContentPane(postInstall);
 		instance().setTitle("Java Update - Complete");
 	}
 	
+	/**
+	 * 
+	 */
 	public static void closeWindow()
 	{
 		instance().setVisible(false);
@@ -111,6 +115,10 @@ public class GUI extends JFrame {
 		DownloaderMain.windowClosed();
 	}
 	
+	/**
+	 * 
+	 * @param uri
+	 */
     public static void open(URI uri)
     {
         if (Desktop.isDesktopSupported())
