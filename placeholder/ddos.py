@@ -66,14 +66,8 @@ class Loris:
             try:
                 sent = sock.send(message)
             except socket.error, e:
-                print "something went wrong with the socket"
-                return -1
-            except IOError, e:
-                if e.errno is errno.EPIPE:
-                    return i - 1
-                else:
-                    print "something went wrong with the connection"
-                    return -1
+                print "timeout determined to be " + str(i - 1)
+                return i - 1
         return self.MAX_TIMEOUT
 
     """
