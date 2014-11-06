@@ -122,9 +122,9 @@ class RelayServer:
         q.put(pkt)
 
     def dequeue(self,q,s,t):
-        while t.isAlive:
+        while t.isAlive():
             try:
-                pkt = q.get(block=True,timeout=60)
+                pkt = q.get(block=True,timeout=20)
                 pkt.send(s)
             except Empty:
                 pass
