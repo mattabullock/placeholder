@@ -1,6 +1,6 @@
 class Packet:
 
-    def __init__(self)
+    def __init__(self):
         self.toIP = ""
         self.returnIP = ""
         self.state = ""

