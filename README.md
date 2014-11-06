@@ -16,3 +16,10 @@ Libraries Used
 4. pyHook - http://www.lfd.uci.edu/~gohlke/pythonlibs/#pyhook
 5. pbkdf2 - pip install pbkdf2
 6. psutil - pip install psutil
+
+##Installer (written in Java)
+
+Library Used
+
+1. Java Native Access (JNA) - https://github.com/twall/jna#readme
+    Using both jna.jar and jna-platform.jar
