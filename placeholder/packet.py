@@ -44,19 +44,19 @@ class Packet:
                 return data
 
     def rcvData(self,s,size):
-        return s.recv(size)
+        if size is 0:
+            return ""
+        data = s.recv(size)
+	while len(data) < size:
+	    data += s.recv(size-len(data))
+        return data
 
     def construct(self, sock):
         self.state = self.rcvTypeOfCommand(sock)
-        print self
         self.toIP = self.rcvIP(sock)
-        print self
         self.returnIP = self.rcvIP(sock)
-        print self
         self.length = self.rcvSizeOfCommand(sock)
-        print self
         self.data = self.rcvData(sock,self.length)
-        print len(self)
 
     def send(self,sock):
         sock.send(str(self))

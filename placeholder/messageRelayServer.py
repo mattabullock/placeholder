@@ -108,7 +108,6 @@ class RelayServer:
                 else:
                     raise
             pkt.returnIP = address[0]
-            print "return to: " + pkt.returnIP
             self.enqueueToVirus(pkt)
 
     def enqueueToClient(self,pkt,address=""):
