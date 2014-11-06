@@ -50,10 +50,15 @@ class Packet:
 
     def construct(self, sock):
         self.state = self.rcvTypeOfCommand(sock)
+        print self
         self.toIP = self.rcvIP(sock)
+        print self
         self.returnIP = self.rcvIP(sock)
+        print self
         self.length = self.rcvSizeOfCommand(sock)
+        print self
         self.data = self.rcvData(sock,self.length)
+        print self
 
     def send(self,sock):
         sock.send(str(self))
