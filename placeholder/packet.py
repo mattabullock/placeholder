@@ -56,7 +56,7 @@ class Packet:
         self.length = self.rcvSizeOfCommand(sock)
         print self
         self.data = self.rcvData(sock,self.length)
-        print self
+        print len(self)
 
     def send(self,sock):
         sock.send(str(self))
