@@ -9,6 +9,15 @@ RSnake).
 Put the rest of the explanation here
 """
 
+import sys
+import getopt
+
+def main():
+    loris = Loris(addr = "128.252.102.114", port = 80, totalConnections = 200)
+
+if __name__ == "__main__":
+    main()
+
 class Loris:
     def __init__(self, addr, port = 80, totalConnections = 50):
         self.addr = addr
