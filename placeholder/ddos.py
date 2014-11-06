@@ -61,9 +61,17 @@ class Loris:
             print "Attempting a " + str(i) + " second timeout"
             time.sleep(i)
             message = "X-a: b\r\n"
-            sent = sock.send(message)
-            if sent is not len(message):
-                return i - 1
+            try:
+                sent = sock.send(message)
+            except socket.error, e:
+                print "something went wrong with the socket"
+                return -1
+            except IOError, e:
+                if e.errno is errno.EPIPE:
+                    return i - 1
+                else:
+                    print "something went wrong with the connection"
+                    return -1
         return self.MAX_TIMEOUT
 
     """
