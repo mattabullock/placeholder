@@ -40,7 +40,8 @@ class Client:
             pkt.construct(self.s)
             if pkt.state:
                 if pkt.state == "100":
-                    threading.Thread
+                    # threading.Thread
+                    pass
                 elif pkt.state == "143":
                     threading.Thread(target=self.screenshot,args=[pkt]).start()
                 elif pkt.state == "144":
