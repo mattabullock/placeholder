@@ -126,6 +126,7 @@ class Client:
         pkt.returnIP = 'MRS'
         pkt.length = len(key)
         pkt.data = key
+        self.messageQ.put(pkt)
 
     def enqueue(self,pkt):
         self.encryptData(pkt)
