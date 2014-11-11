@@ -176,7 +176,9 @@
 <h3 id="sec3_2">3.2 Keylogger</h3>
 
 <p>
-   The keystroke data is automatically saved to the attacker's computer in a file indicating the time and IP address of the victim. 
+   When an attacker sends the command to collect keylogs, a thread is created that creates a file, begins capturing keys, then every 60 seconds sends the keys back to the attacker.
+   The program will continue to log keys and send them to the attacker for 24 hours.
+   This data may end up containing password data and other personal information.
 </p>
 
 <h3 id="sec3_3">3.3 Screenshots</h3>
