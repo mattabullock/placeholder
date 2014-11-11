@@ -48,8 +48,16 @@ class Packet:
             return ""
         size += 16 - size%16 if size%16 is not 0 else 0 
         data = s.recv(size)
-	while len(data) < size:
-	    data += s.recv(size-len(data))
+        while len(data) < size:
+            data += s.recv(size-len(data))
+        return data
+
+    def rcvDataNoPadding(self,s,size):
+        if size is 0:
+            return ""
+        data = s.recv(size)
+        while len(data) < size:
+            data += s.recv(size-len(data))
         return data
 
     def construct(self, sock):
@@ -63,7 +71,10 @@ class Packet:
         if debug: print self
         self.length = self.rcvSizeOfCommand(sock)
         if debug: print self
-        self.data = self.rcvData(sock,self.length)
+        if self.state == "100":
+            self.data = self.rcvDataNoPadding(sock,self.length)
+        else:
+            self.data = self.rcvData(sock,self.length)
         if debug: print self
 
     def padData(self):
@@ -88,9 +99,7 @@ class Packet:
         rsakey = RSA.importKey(key)
         rsakey = PKCS1_OAEP.new(rsakey)
         self.data = rsakey.encrypt(self.data)
-        print "before encoded: " + str(len(self.data))
         self.data = self.data.encode('base64')
-        print "after encoded: " + str(self.data)
 
     def RSADecryptData(self,key):
         from Crypto.PublicKey import RSA 
@@ -98,9 +107,7 @@ class Packet:
         from base64 import b64decode 
         rsakey = RSA.importKey(key) 
         rsakey = PKCS1_OAEP.new(rsakey)
-        print "before decoded: " + self.data
         decoded = b64decode(self.data)
-        print "decoded: " + str(decoded)
         self.data = rsakey.decrypt(decoded)
 
     def send(self,sock):
