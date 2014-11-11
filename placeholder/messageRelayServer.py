@@ -90,7 +90,6 @@ class RelayServer:
                 tup = self.toVirus[address[0]]
                 self.toVirus[address[0]] = (tup[0],tup[1],pkt.data)
                 self.sendIPList()
-                print pkt.data
             else: self.enqueueToClient(pkt)
 
 
