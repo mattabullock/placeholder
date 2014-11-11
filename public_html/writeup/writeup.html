@@ -17,6 +17,9 @@
         text-align: center;
         font-style: italic;
     }
+    html {
+        margin: 0 1.5%;
+    }
 </style>
 </head>
 
@@ -39,7 +42,7 @@
     <em>This project is meant for educational purposes only. The authors take no responsibility for anyone using this code with malicious intent.</em>
 </p>
 
-<h2>Abstract:</h2>
+<h2>Abstract</h2>
 
 <p>
     A malicious user only needs you to press "Yes" once for them to have control over your computer.
@@ -88,48 +91,48 @@
     Furthermore, the attacker can connect to the server from anywhere.
 </p>
 
-<img src="fig_1_1.png" alt="A victim connects to the attacker via a relay server">
+<img src="fig_1.png" alt="A victim connects to the attacker via a relay server">
 <p class="figure-label">
-    Figure 1.1: Connection between attacker and victim
+    Figure 1: Connection between attacker and victim
 </p>
 
 <h2 id="sec2">2. How the Trojan Infects A Computer</h2>
 
 <p>
-    When a user visits <a href="http://54.69.185.61/~ubuntu/infector/">this website</a> to play a seemingly harmless game, they are informed their Java version is out of date and prompted to download and install a Java update.
+    When a user visits <a href="http://54.69.185.61/~ubuntu/infector/infector.html">this website</a> to play a seemingly harmless game, they are informed their Java version is out of date and prompted to download and install a Java update.
     When the user opens the fake Java update file it will be prompted by User Account Control to allow the program to run.
     Since the installer was written in Java, the UAC popup will tell the user the file is signed by Oracle Corporation, so it will have a valid digital signature.
 </p>
 
-<img src="fig_2_1.png" alt="The appearance of the infection page">
+<img src="fig_2.png" alt="The appearance of the infection page">
 <p class="figure-label">
-    Figure 2.1: The infecting page
+    Figure 2: The infecting page
 </p>
 
-<img src="fig_2_2.png" alt="The installer appears to be signed by Oracle!">
+<img src="fig_3.png" alt="The installer appears to be signed by Oracle!">
 <p class="figure-label">
-        Figure 2.2: The installer has been "signed" by Oracle Corporation.
+        Figure 3: The installer has been "signed" by Oracle Corporation.
 </p>
 
 <p>
     The file that is then downloaded follows the same naming scheme as Java updates and the interface looks very similar.
 </p>
 
-<img src="fig_2_3.png" alt="Java installer">
+<img src="fig_4.png" alt="Java installer">
 <p class="figure-label">
-    Figure 2.3: The actual Java installer
+    Figure 4: The actual Java installer
 </p>
-<img src="fig_2_4.png" alt="Our imitation (before installation)">
+<img src="fig_5.png" alt="Our imitation (before installation)">
 <p class="figure-label">
-    Figure 2.4: Our imitation of the Java installer (before installation)
+    Figure 5: Our imitation of the Java installer (before installation)
 </p>
-<img src="fig_2_5.png" alt="Our imitation (during installation)">
+<img src="fig_6.png" alt="Our imitation (during installation)">
 <p class="figure-label">
-    Figure 2.5: Our imitation of the Java installer (during installation)
+    Figure 6: Our imitation of the Java installer (during installation)
 </p>
-<img src="fig_2_6.png" alt="Our imitation (after installation)">
+<img src="fig_7.png" alt="Our imitation (after installation)">
 <p class="figure-label">
-    Figure 2.6: Our imitation of the Java installer (after installation)
+    Figure 7: Our imitation of the Java installer (after installation)
 </p>
 
 <p>
@@ -165,9 +168,9 @@
     When sending the passwords to the attacker, the website, username, and password for every stored password in Chrome are then stored on the attackers computer in a file that indicates the time and IP address of the victim.
 </p>
 
-<img src="fig_3_1.png" alt="File showing Chrome passwords">
+<img src="fig_8.png" alt="File showing Chrome passwords">
 <p class="figure-label">
-    Figure 3.1: The attacker can see the victim's plaintext passwords for websites
+    Figure 8: The attacker can see the victim's plaintext passwords for websites
 </p>
 
 <h3 id="sec3_2">3.2 Keylogger</h3>
@@ -217,7 +220,7 @@
     4.2 Encryption
 </h3>
 <p>
-    We use Diffie-Hellman to generate a symmetric encryption key for each client and the attacker.
+    We use RSA to generate a symmetric encryption key for each client and the attacker.
     Using this key, the data field of all messages is encrypted with AES.
 </p>
 <h2 id="sec5">
