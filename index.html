@@ -320,7 +320,7 @@
                     <ul>
                         <li>BootScheduler.java - This file runs the 'schtasks' command to schedule a specified executable file to be run at the logon of any user.  Once this has been done, the file is executed (such that any host that installs an executable will be infected immediately and not on next logon)</li>
                         <li>Elevator.java - Sourced largely from <a href="http://stackoverflow.com/questions/11041509/elevating-a-processbuilder-process-via-uac">this</a> stackoverflow answer.  This class is used in tandem with Shell32X (see below) to grant elevated privileges to a process (in this case, the installer itself).</li>
-                        <li>Shell32X.java - Sourced largely from <a href="http://stackoverflow.com/questions/11041509/elevating-a-processbuilder-process-via-uac">this</a> stackoverflow answer.  This class utilizes the JNA library to allow the win32 ShellExecute command to be executed.</li>
+                        <li>Shell32X.java - Sourced largely from <a href="http://stackoverflow.com/questions/11041509/elevating-a-processbuilder-process-via-uac">this</a> stackoverflow answer.  This class utilizes the JNA<a href="#citations"><sup>[7]</sup></a> library to allow the win32 ShellExecute command to be executed.</li>
                     </ul>
                 </li>
             </ul>
@@ -373,7 +373,6 @@
   <dt>UAC</dt>
   <dd>User Access Control</dd>
 </dl>
-
 
 </body>
 </html>
