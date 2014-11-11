@@ -5,7 +5,7 @@
 <meta charset="UTF-8">
 <meta name="author" content="Garrett Bourg, Matt Bullock, Robert Miller">
 <meta name="robots" content="index">
-<meta name="Keywords" content="placeholder,trojan,hack,botnet,windows,java,netsec,network,security">
+<meta name="Keywords" content="Placeholder,Trojan,botnet,Windows,Python,Java,netsec,network,security,command and control">
 <meta name="Description" content="Description of Placeholder Trojan made for academic purposes">
 <style type="text/css">
     img {
@@ -44,11 +44,13 @@
 <h2>Abstract</h2>
 
 <p>
-    A malicious user only needs you to press "Yes" once for them to have control over your computer.
-    When a smartphone application asks for permissions it will list what permissions it needs, but when a Windows application  asks for permission it receives all permissions of the logged in user and possibly more.
-    To show the vulnerabilities of such a system, we created a Trojan horse program that infects Windows computers.
-    Disguised as another program, our Trojan is really malicious software that is not detected by antivirus software.
-    This "Placeholder" Trojan silently runs on a victim's computer and is capable of stealing users' information and assisting in cybercrime.
+    A Windows machine infected with the Placeholder Trojan can be made to do a multitude of things by a remote attacker.
+    When a victim installs our malicious program, their computer will communicate silently with an attacker whenever they are logged in.
+    Our program consists of a fake installer--disguised as an official Java updater--which downloads and installs the Trojan (written in Python and packaged as an executable) onto the victim's computer.
+    The Trojan communicates with a remote server (also written in Python) which is controlled by the attacker via a Java GUI.
+    The data in all messages between the attacker and the victims are encrypted and routed through the remote server (an Amazon EC2 instance).
+    This makes the program more secure, as the attacker's IP address cannot be discovered by monitoring network traffic from an infected computer.
+    Furthermore, the attacker can connect to the server from anywhere.
 </p>
 
 <h2>
@@ -56,7 +58,7 @@
 </h2>
 
 <p>
-    Placeholder, Trojan, hack, botnet, Windows, Java, netsec, network, security
+    Placeholder, Trojan, botnet, Windows, Python, Java, netsec, network, security, command and control
 </p>
 
 <h2><a id="toc"></a>Table of Contents:</h2>
@@ -69,27 +71,27 @@
     <li><a href="#sec3_3">3.3 Screenshots</a></li>
     <li><a href="#sec3_4">3.4 DDoS</a></li>
 </ul></li>
-<li><a href="#sec4">4. Message Relay Server
-<li><a href="#sec5">5. Security</a>
+<li><a href="#sec4">4. Message Relay Server</a></li>
+<li><a href="#sec5">5. Attacker GUI</a></li>
+<li><a href="#sec6">6. Security</a></li>
 <ul>
-    <li><a href="#sec5_1">5.1 Protocol</a></li>
-    <li><a href="#sec5_2">5.2 Encryption</a></li>
+    <li><a href="#sec6_1">6.1 Protocol</a></li>
+    <li><a href="#sec6_2">6.2 Encryption</a></li>
 </ul></li>
-<li><a href="#sec6">6. Conclusion</a></li>
-<li><a href="#sec7">7. Source Code</a></li>
-<li><a href="#sec8">8. References</a></li>
+<li><a href="#sec7">7. Conclusion</a></li>
+<li><a href="#sec8">8. Source Code</a></li>
+<li><a href="#sec9">9. References</a></li>
+<li><a href="#sec10">10. List of Acronyms</a></li>
 </ul>
 
 <h2 id="sec1">1. Introduction</h2>
 
 <p>
-    A Windows machine infected with the Placeholder Trojan can be made to do a multitude of things by a remote attacker.
-    When a victim installs our malicious program, their computer will communicate silently with an attacker whenever they are logged in.
-    Our program consists of a fake installer--disguised as an official Java updater--which downloads and installs the Trojan (written in Python and packaged as an executable) onto the victim's computer.
-    The Trojan communicates with a remote server (also written in Python) which is controlled by the attacker via a Java GUI.
-    The data in all messages between the attacker and the victims are encrypted and routed through the remote server (an Amazon EC2 instance).
-    This makes the program more secure, as the attacker's IP address cannot be discovered by monitoring network traffic from an infected computer.
-    Furthermore, the attacker can connect to the server from anywhere.
+    A malicious user only needs you to press "Yes" once for them to have control over your computer.
+    When a smartphone application asks for permissions it will list what permissions it needs, but when a Windows application  asks for permission it receives all permissions of the logged in user and possibly more.
+    To show the vulnerabilities of such a system, we created a Trojan horse program that infects Windows computers.
+    Disguised as another program, our Trojan is really malicious software that is not detected by antivirus software.
+    This "Placeholder" Trojan silently runs on a victim's computer and is capable of stealing users' information and assisting in cybercrime.
 </p>
 
 <img src="fig_1.png" alt="A victim connects to the attacker via a relay server">
@@ -100,40 +102,35 @@
 <h2 id="sec2">2. How the Trojan Infects A Computer</h2>
 
 <p>
-    When a user visits <a href="http://54.69.185.61/~ubuntu/infector/">http://54.69.185.61/~ubuntu/infector/</a> to play a seemingly harmless game, they are informed their Java version is out of date and prompted to download and install a Java update.
+    When a user visits <a href="http://woofles.github.io/placeholder/infector/">http://woofles.github.io/placeholder/infector/</a> to play a seemingly harmless game, they are informed their Java version is out of date and prompted to download and install a Java update.
     When the user opens the fake Java update file it will be prompted by User Account Control to allow the program to run.
     Since the installer was written in Java, the UAC popup will tell the user the file is signed by Oracle Corporation, so it will have a valid digital signature.
 </p>
 
-<img src="fig_2.png" alt="The appearance of the infection page">
+<img src="fig_2.png" alt="The installer appears to be signed by Oracle!">
 <p class="figure-label">
-    Figure 2: The infecting page
-</p>
-
-<img src="fig_3.png" alt="The installer appears to be signed by Oracle!">
-<p class="figure-label">
-        Figure 3: The installer has been "signed" by Oracle Corporation.
+    Figure 2: The installer has been "signed" by Oracle Corporation.
 </p>
 
 <p>
     The file that is then downloaded follows the same naming scheme as Java updates and the interface looks very similar.
 </p>
 
-<img src="fig_4.png" alt="Java installer">
+<img src="fig_3.png" alt="Java installer">
 <p class="figure-label">
-    Figure 4: The actual Java installer
+    Figure 3: The actual Java installer
 </p>
-<img src="fig_5.png" alt="Our imitation (before installation)">
+<img src="fig_4.png" alt="Our imitation (before installation)">
 <p class="figure-label">
-    Figure 5: Our imitation of the Java installer (before installation)
+    Figure 4: Our imitation of the Java installer (before installation)
 </p>
-<img src="fig_6.png" alt="Our imitation (during installation)">
+<img src="fig_5.png" alt="Our imitation (during installation)">
 <p class="figure-label">
-    Figure 6: Our imitation of the Java installer (during installation)
+    Figure 5: Our imitation of the Java installer (during installation)
 </p>
-<img src="fig_7.png" alt="Our imitation (after installation)">
+<img src="fig_6.png" alt="Our imitation (after installation)">
 <p class="figure-label">
-    Figure 7: Our imitation of the Java installer (after installation)
+    Figure 6: Our imitation of the Java installer (after installation)
 </p>
 
 <p>
@@ -155,13 +152,13 @@
     When a user enters their login information on a website using Google Chrome they are prompted to save the login information so it will be autofilled later.
     This information is saved in an SQLite database stored locally.
     All the information in this database is stored as plaintext except the password which is encrypted using the Windows API function CryptProtectData, meaning it can be simply decrypted when logged in as the same user.
-    When the trojan receives the command to gather stored passwords, it does three things.
+    When the Trojan receives the command to gather stored passwords, it does three things.
 </p>
 
     <ol>
-    <li>First it kills all processes with the name 'chrome.exe'. It does this to unlock the database so the trojan can then call read functions on it.</li>
+    <li>First it kills all processes with the name "chrome.exe". It does this to unlock the database so the Trojan can then call read functions on it.</li>
     <li>Next it opens the database and pulls all the data from it.</li> 
-    <li>It calls the CryptUnprotectData function from the pywin32 library on the encrypted password which returns the password in plaintext.</li>
+    <li>It calls the CryptUnprotectData function from the pywin32<a href="#citations"><sup>[1]</sup></a> library on the encrypted password which returns the password in plaintext.</li>
     <li>Lastly it creates a packet containing this data and sends it back to the attacker that originally asked for the information.</li>
     </ol>
 
@@ -169,15 +166,15 @@
     When sending the passwords to the attacker, the website, username, and password for every stored password in Chrome are then stored on the attackers computer in a file that indicates the time and IP address of the victim.
 </p>
 
-<img src="fig_8.png" alt="File showing Chrome passwords">
+<img src="fig_7.png" alt="File showing Chrome passwords">
 <p class="figure-label">
-    Figure 8: The attacker can see the victim's plaintext passwords for websites
+    Figure 7: The attacker can see the victim's plaintext passwords for websites
 </p>
 
 <h3 id="sec3_2">3.2 Keylogger</h3>
 
 <p>
-   When an attacker sends the command to collect keylogs, a thread is created that creates a file, begins capturing keys, then every 60 seconds sends the keys back to the attacker.
+   When an attacker sends the command to collect keystrokes, a thread is created that creates a file, begins capturing keys, then every 60 seconds sends the keys back to the attacker.
    The program will continue to log keys and send them to the attacker for 24 hours.
    This data may end up containing password data and other personal information.
 </p>
@@ -185,7 +182,7 @@
 <h3 id="sec3_3">3.3 Screenshots</h3>
 
 <p>
-    The screenshot is temporarily saved as a Portable Network Graphics image on the vicims computer, and the binary data for it is sent to the attacker.
+    A screenshot is temporarily saved as a Portable Network Graphics image on the victims computer, and the binary data for it is sent to the attacker.
     The data is automatically saved to an image file on the attacker's computer indicating the time and IP address of the victim.
 </p>
 
@@ -194,7 +191,7 @@
 </h3>
 
 <p>
-    The attacker can target the IP address and port number of a host to be attacked by a DDoS tool based on the slowloris exploit.
+    The attacker can target the IP address and port number of a host to be attacked by a DDoS tool based on the slowloris<a href="#citations"><sup>[8]</sup></a>  exploit.
     This technique connects to all available sockets (this number is generally capped by most webservers to avoid extensive use of system resources).
     Each of these connections is kept alive by sending a short message just before timing out.
     Because of the relatively low number of packets sent to the target host (contrasted with common methods such as ping flooding), slowloris can be comparatively difficult to detect without careful examination of active connections.
@@ -206,23 +203,39 @@
 
 <p>
     The Message Relay Server was created to act as an intermediary between the infected computer and the attacker. 
-    It is meant to be hosted on an external server, most likely owned by the attacker. 
+    It is meant to be hosted on an external server, most likely owned by the attacker.
+    Our relay server is hosted on an Amazon EC2 instance.
     For added security, it can be hosted behind a TOR network.
-    The Message Relay Server keeps track of all connections to infected and the associated AES keys.
-    When a client connects to the Message Relay Server, the server sends a list of IPs and their corresponding AES keys so the client is able to effectively communicate with the infected computers.
+    The relay server keeps track of all connections to infected and the associated AES keys.
+    When a client connects to the relay server, the server sends a list of IPs and their corresponding AES keys so the client is able to effectively communicate with the infected computers.
     Every time a new computer is infected or disinfected, the server updates and sends out an update to all the connected clients.
 </p>
 
 <h2 id="sec5">
-    5. Security
+    5. Attacker GUI
+</h2>
+
+<p>
+    The attacker connects to the relay server using a separate program.
+    He or she can select clients to send commands to using a GUI.
+    The advantage of separating the attacker from the relay server is that the attacker can operate from any location, and his or her IP is unknown.
+</p>
+
+<img src="fig_8.png" alt="Attacker GUI">
+<p class="figure-label">
+  Figure 8: View of the GUI the attacker uses to send commands to victims
+</p>
+
+<h2 id="sec6">
+    6. Security
 </h2>
 
 <p>
     We took several steps to prevent an infected computer from revealing the identity of the attacker, and the nature of communication between the attacker and victim.
 </p>
 
-<h3 id="sec5_1">
-    5.1 Protocol
+<h3 id="sec6_1">
+    6.1 Protocol
 </h3>
 
 <p>
@@ -232,15 +245,21 @@
     Knowing the IP address of the relay server is all a security analyst would be able to figure out by looking at the network traffic of an infected computer.
 </p>
 
-<h3 id="sec5_2">
-    5.2 Encryption
+<h3 id="sec6_2">
+    6.2 Encryption
 </h3>
 <p>
     All data sent across the network is encrypted using the Advanced Encryption Standard. 
-    A unique encryption key is generated on each infected computer and encrypted using RSA, then sent to the Message Relay Server and stored there. The attacker receives the encryption key when they connect to the Message Relay Server.
+    A unique encryption key is generated on each infected computer and encrypted using RSA, then sent to the Message Relay Server and stored there.
+    The attacker receives the encryption key when they connect to the Message Relay Server.
+    The encryption key is encrypted when it's sent from the relay server to the attacker using AES and is encrypted and decrypted with a secret key that both the relay server and client have.
 </p>
-<h2 id="sec6">
-    6. Conclusion
+<img src="fig_9.png" alt="The data sent over the network is unreadable">
+<p class="figure-label">
+    Figure 9: The data sent across the network is unreadable due to AES encryption.
+</p>
+<h2 id="sec7">
+    7. Conclusion
 </h2>
 
 <p>
@@ -251,8 +270,8 @@
     Overall, all we can do is to urge users to take security very seriously and to not install programs from unknown sources, even if they appear legitimate.
 </p>
 
-<h2 id="sec7">
-    7. References
+<h2 id="sec8">
+    8. References
 </h2>
 
 <p>
@@ -281,15 +300,15 @@
     </ul>
 </p>
 
-<h2 id="sec8">
-    8. References
+<h2 id="sec9">
+    9. References
 </h2>
 
 <p>
     Our program used the following open-source libraries and tools:
 </p>
 
-<p>
+<p id="citations">
    [1] pywin32 - "Unofficial Windows Binaries for Python Extension Packages". <a href="http://www.lfd.uci.edu/~gohlke/pythonlibs/#pywin32">http://www.lfd.uci.edu/~gohlke/pythonlibs/#pywin32</a><br>
    [2] Pillow (PIL) - "Pillow". <a href="https://pillow.readthedocs.org/">https://pillow.readthedocs.org/</a><br>
    [3] PyCrypto - "PyCrypto - The Python Cryptography Toolkit". <a href="https://www.dlitz.net/software/pycrypto/">https://www.dlitz.net/software/pycrypto/</a><br>
@@ -303,6 +322,27 @@
 <p>
     The remainder of the program (including the attacker's GUI and client, the malware itself, the relay server, and the installer) was written by us using the standard Python and Java libraries.
 </p>
+
+<h2 id="sec10">
+    10. List of Acronyms
+</h2>
+
+<dl>
+  <dt>AES</dt>
+  <dd>Advanced Encryption Standard</dd>
+  <dt>EC2</dt>
+  <dd>Elastic Compute Cloud</dd>
+  <dt>GUI</dt>
+  <dd>Graphical User Interface</dd>
+  <dt>HTTP</dt>
+  <dd>Hypertext Transfer Protocol</dd>
+  <dt>IP</dt>
+  <dd>Internet Protocol</dd>
+  <dt>PNG</dt>
+  <dd>Portable Network Graphics</dd>
+  <dt>UAC</dt>
+  <dd>???</dd>
+</dl>
 
 
 </body>
