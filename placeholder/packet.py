@@ -97,7 +97,8 @@ class Packet:
         from Crypto.Cipher import PKCS1_OAEP 
         from base64 import b64decode 
         rsakey = RSA.importKey(key) 
-        rsakey = PKCS1_OAEP.new(rsakey) 
+        rsakey = PKCS1_OAEP.new(rsakey)
+        print "before decoded: " + self.data
         decoded = b64decode(self.data)
         print "decoded: " + str(decoded)
         self.data = rsakey.decrypt()
