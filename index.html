@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>Placeholder Trojan</title>
+<meta charset="UTF-8">
+<meta name="author" content="Garrett Bourg, Matt Bullock, Robert Miller">
+<meta name="robots" content="index">
+<meta name="Keywords" content="Placeholder,Trojan,botnet,Windows,Python,Java,netsec,network,security,command and control">
+<meta name="Description" content="Description of Placeholder Trojan made for academic purposes">
+<style type="text/css">
+    img {
+        display: block;
+        margin: 0 auto;
+    }
+    .figure-label {
+        text-align: center;
+        font-style: italic;
+    }
+    html {
+        margin: 0 1.5%;
+    }
+</style>
+</head>
+
+<body>
+<h1>Placeholder Trojan</h1>
+
+<p>
+    The following is a project written by
+    <!--
+    <b>Garrett Bourg</b> <a href="mailto:bourg.garrett@wustl.edu">bourg.garrett@wustl.edu</a>,
+    <b>Matt Bullock</b> <a href="mailto:bullock@wustl.edu">bullock@wustl.edu</a>, and
+    <b>Robert Miller</b> <a href="mailto:millerrt@wustl.edu">millerrt@wustl.edu</a>
+    -->
+    
+    <b>711</b> <a href="mailto:bourg.garrett@wustl.edu">redacted@wustl.edu</a>, <b>742</b> <a href="mailto:bullock@wustl.edu">redacted@wustl.edu</a>, and <b>103</b> <a href="mailto:millerrt@wustl.edu">redacted@wustl.edu</a>
+    
+    for <a href="http://www.cse.wustl.edu/~jain/">Dr. Raj Jain's</a> network security course.
+    The source code is available on our Github page <a href="https://github.com/Woofles/placeholder">https://github.com/Woofles/placeholder</a>.
+    <br>
+    <em>This project is meant for educational purposes only. The authors take no responsibility for anyone using this code with malicious intent.</em>
+</p>
+
+<h2>Abstract</h2>
+
+<p>
+    A Windows machine infected with the Placeholder Trojan can be made to do a multitude of things by a remote attacker.
+    When a victim installs our malicious program, their computer will communicate silently with an attacker whenever they are logged in.
+    Our program consists of a fake installer--disguised as an official Java updater--which downloads and installs the Trojan (written in Python and packaged as an executable) onto the victim's computer.
+    The Trojan communicates with a remote server (also written in Python) which is controlled by the attacker via a Java GUI.
+    The data in all messages between the attacker and the victims are encrypted and routed through the remote server (an Amazon EC2 instance).
+    This makes the program more secure, as the attacker's IP address cannot be discovered by monitoring network traffic from an infected computer.
+    Furthermore, the attacker can connect to the server from anywhere.
+</p>
+
+<h2>
+    Keywords
+</h2>
+
+<p>
+    Placeholder, Trojan, botnet, Windows, Python, Java, netsec, network, security, command and control
+</p>
+
+<h2><a id="toc"></a>Table of Contents:</h2>
+<ul>
+<li><a href="#sec1">1. Introduction</a></li>
+<li><a href="#sec2">2. How the Trojan Infects A Computer</a></li>
+<li><a href="#sec3">3. What the Trojan Does</a><ul>
+    <li><a href="#sec3_1">3.1 Password Theft</a></li>
+    <li><a href="#sec3_2">3.2 Keylogger</a></li>
+    <li><a href="#sec3_3">3.3 Screenshots</a></li>
+    <li><a href="#sec3_4">3.4 DDoS</a></li>
+</ul></li>
+<li><a href="#sec4">4. Message Relay Server
+<li><a href="#sec5">5. Security</a>
+<ul>
+    <li><a href="#sec5_1">5.1 Protocol</a></li>
+    <li><a href="#sec5_2">5.2 Encryption</a></li>
+</ul></li>
+<li><a href="#sec6">6. Conclusion</a></li>
+<li><a href="#sec7">7. Source Code</a></li>
+<li><a href="#sec8">8. References</a></li>
+</ul>
+
+<h2 id="sec1">1. Introduction</h2>
+
+<p>
+    A malicious user only needs you to press "Yes" once for them to have control over your computer.
+    When a smartphone application asks for permissions it will list what permissions it needs, but when a Windows application  asks for permission it receives all permissions of the logged in user and possibly more.
+    To show the vulnerabilities of such a system, we created a Trojan horse program that infects Windows computers.
+    Disguised as another program, our Trojan is really malicious software that is not detected by antivirus software.
+    This "Placeholder" Trojan silently runs on a victim's computer and is capable of stealing users' information and assisting in cybercrime.
+</p>
+
+<img src="fig_1.png" alt="A victim connects to the attacker via a relay server">
+<p class="figure-label">
+    Figure 1: Connection between attacker and victim
+</p>
+
+<h2 id="sec2">2. How the Trojan Infects A Computer</h2>
+
+<p>
+    When a user visits <a href="http://woofles.github.io/placeholder/infector/">http://woofles.github.io/placeholder/infector/</a> to play a seemingly harmless game, they are informed their Java version is out of date and prompted to download and install a Java update.
+    When the user opens the fake Java update file it will be prompted by User Account Control to allow the program to run.
+    Since the installer was written in Java, the UAC popup will tell the user the file is signed by Oracle Corporation, so it will have a valid digital signature.
+</p>
+
+<img src="fig_2.png" alt="The installer appears to be signed by Oracle!">
+<p class="figure-label">
+    Figure 2: The installer has been "signed" by Oracle Corporation.
+</p>
+
+<p>
+    The file that is then downloaded follows the same naming scheme as Java updates and the interface looks very similar.
+</p>
+
+<img src="fig_3.png" alt="Java installer">
+<p class="figure-label">
+    Figure 3: The actual Java installer
+</p>
+<img src="fig_4.png" alt="Our imitation (before installation)">
+<p class="figure-label">
+    Figure 4: Our imitation of the Java installer (before installation)
+</p>
+<img src="fig_5.png" alt="Our imitation (during installation)">
+<p class="figure-label">
+    Figure 5: Our imitation of the Java installer (during installation)
+</p>
+<img src="fig_6.png" alt="Our imitation (after installation)">
+<p class="figure-label">
+    Figure 6: Our imitation of the Java installer (after installation)
+</p>
+
+<p>
+    Regardless of what the user does at this point the Trojan will be installed.
+    If they click the "x" to close the window, hit cancel or hit install, the installer will download the Trojan. 
+    The installer will then run the executable file that was downloaded as administrator and schedule it as a process to run as administrator at startup. 
+    The executable file that was downloaded and run is named "svchost.exe", which is a very common program to have running on a Windows computer, helping us hide it from the user.
+</p>
+<h2 id="sec3">3. What The Trojan Does</h2>
+
+<p>
+    Our program, once on a victim's computer, will communicate with the attacker via a relay server.
+    The attacker can issue various commands, such as harvesting the user's Chrome passwords, taking a screen capture, and logging keystrokes.
+</p>
+
+<h3 id="sec3_1">3.1 Password Theft</h3>
+
+<p>
+    When a user enters their login information on a website using Google Chrome they are prompted to save the login information so it will be autofilled later.
+    This information is saved in an SQLite database stored locally.
+    All the information in this database is stored as plaintext except the password which is encrypted using the Windows API function CryptProtectData, meaning it can be simply decrypted when logged in as the same user.
+    When the Trojan receives the command to gather stored passwords, it does three things.
+</p>
+
+    <ol>
+    <li>First it kills all processes with the name "chrome.exe". It does this to unlock the database so the Trojan can then call read functions on it.</li>
+    <li>Next it opens the database and pulls all the data from it.</li> 
+    <li>It calls the CryptUnprotectData function from the pywin32<a href="#citations"><sup>[1]</sup></a> library on the encrypted password which returns the password in plaintext.</li>
+    <li>Lastly it creates a packet containing this data and sends it back to the attacker that originally asked for the information.</li>
+    </ol>
+
+<p>
+    When sending the passwords to the attacker, the website, username, and password for every stored password in Chrome are then stored on the attackers computer in a file that indicates the time and IP address of the victim.
+</p>
+
+<img src="fig_7.png" alt="File showing Chrome passwords">
+<p class="figure-label">
+    Figure 7: The attacker can see the victim's plaintext passwords for websites
+</p>
+
+<h3 id="sec3_2">3.2 Keylogger</h3>
+
+<p>
+   When an attacker sends the command to collect keystrokes, a thread is created that creates a file, begins capturing keys, then every 60 seconds sends the keys back to the attacker.
+   The program will continue to log keys and send them to the attacker for 24 hours.
+   This data may end up containing password data and other personal information.
+</p>
+
+<h3 id="sec3_3">3.3 Screenshots</h3>
+
+<p>
+    A screenshot is temporarily saved as a Portable Network Graphics image on the victims computer, and the binary data for it is sent to the attacker.
+    The data is automatically saved to an image file on the attacker's computer indicating the time and IP address of the victim.
+</p>
+
+<h3 id="sec3_4">
+    3.4 DDoS
+</h3>
+
+<p>
+    The attacker can target the IP address and port number of a host to be attacked by a DDoS tool based on the slowloris<a href="#citations"><sup>[8]</sup></a>  exploit.
+    This technique connects to all available sockets (this number is generally capped by most webservers to avoid extensive use of system resources).
+    Each of these connections is kept alive by sending a short message just before timing out.
+    Because of the relatively low number of packets sent to the target host (contrasted with common methods such as ping flooding), slowloris can be comparatively difficult to detect without careful examination of active connections.
+</p>
+
+<h2 id="sec4">
+    4. Message Relay Server
+</h2>
+
+<p>
+    The Message Relay Server was created to act as an intermediary between the infected computer and the attacker. 
+    It is meant to be hosted on an external server, most likely owned by the attacker.
+    Our relay server is hosted on an Amazon EC2 instance.
+    For added security, it can be hosted behind a TOR network.
+    The relay server keeps track of all connections to infected and the associated AES keys.
+    When a client connects to the relay server, the server sends a list of IPs and their corresponding AES keys so the client is able to effectively communicate with the infected computers.
+    Every time a new computer is infected or disinfected, the server updates and sends out an update to all the connected clients.
+</p>
+
+<h2 id="sec5">
+    5. Security
+</h2>
+
+<p>
+    We took several steps to prevent an infected computer from revealing the identity of the attacker, and the nature of communication between the attacker and victim.
+</p>
+
+<h3 id="sec5_1">
+    5.1 Protocol
+</h3>
+
+<p>
+    All messages contain the action the victim should perform (take a screenshot, etc.), the source and destination IP addresses, and an optional data field.
+    The data field is encrypted using the Advanced Encryption Standard, and the action the victim should perform is encoded as a single integer to obfuscate its purpose.
+    Though the IP addresses are sent in plaintext, they are in the TCP header as well.
+    Knowing the IP address of the relay server is all a security analyst would be able to figure out by looking at the network traffic of an infected computer.
+</p>
+
+<h3 id="sec5_2">
+    5.2 Encryption
+</h3>
+<p>
+    All data sent across the network is encrypted using the Advanced Encryption Standard. 
+    A unique encryption key is generated on each infected computer and encrypted using RSA, then sent to the Message Relay Server and stored there.
+    The attacker receives the encryption key when they connect to the Message Relay Server.
+    The encryption key is encrypted when it's sent from the relay server to the attacker using AES and is encrypted and decrypted with a secret key that both the relay server and client have.
+</p>
+<img src="fig_8.png" alt="The data sent over the network is unreadable.">
+<p class="figure-label">
+    Figure 8: The data sent across the network is unreadable due to AES encryption.
+</p>
+<h2 id="sec6">
+    6. Conclusion
+</h2>
+
+<p>
+    Although our program is not as sophisticated as malware written by professional hackers, it is able to do a lot of malicious things.
+    Writing the program, we discovered a number of security weaknesses in modern computers, for example the fact that anyone with access to someone's user account can read all of their Chrome passwords.
+    Particularly unsettling is the fact that the program is not flagged by antivirus software.
+    Because our compiled code does not appear extremely similar to known viruses, antivirus software has no reliable means of detecting that it is malicious.
+    Overall, all we can do is to urge users to take security very seriously and to not install programs from unknown sources, even if they appear legitimate.
+</p>
+
+<h2 id="sec7">
+    7. References
+</h2>
+
+<p>
+    The source code is available <a href="/source.zip">here</a> and in the <a href="https://github.com/Woofles/placeholder">Github repository</a> for this project.
+    <ul>
+        <li>placeholder
+            <ul>
+                <li>client.py - The main entry for the trojan. This keeps track of the connection and listens for commands from the attacker.</li>
+                <li>ddos.py - This module runs a DDOS attack on the specified server. It is called from client.py.</li>
+                <li>encryption.py - This module handles the encryption of a folder on the infected computer's hard drive. It is called from client.py.</li>
+                <li>keylog.py - This module handles the keylogging on the infected computer. It is called from client.py.</li>
+                <li>messageRelayServer.py - This is the relay server that both the infected computers and the attackers connect to. It keeps track of all the data going in both directions with a series of message queues.</li>
+                <li>packet.py - A representation of the packet that gets sent across the network. This module is used to encrypt and decrypt network traffic. It is also used to construct packets from data from the socket.</li>
+                <li>passwords.py - This module handles the gathering of passwords. Currently it gathers only passwords from the Google Chrome browser. It is called from client.py.</li>
+                <li>zip.py - This module handles the compression of folders to set them up to be encrypted. It is called from encryption.py.</li>
+            </ul>
+        </li>
+        <li>client
+            <ul>
+            </ul>
+        </li>
+        <li>installer
+            <ul>
+            </ul>
+        </li>
+    </ul>
+</p>
+
+<h2 id="sec8">
+    8. References
+</h2>
+
+<p>
+    Our program used the following open-source libraries and tools:
+</p>
+
+<p id="citations">
+   [1] pywin32 - "Unofficial Windows Binaries for Python Extension Packages". <a href="http://www.lfd.uci.edu/~gohlke/pythonlibs/#pywin32">http://www.lfd.uci.edu/~gohlke/pythonlibs/#pywin32</a><br>
+   [2] Pillow (PIL) - "Pillow". <a href="https://pillow.readthedocs.org/">https://pillow.readthedocs.org/</a><br>
+   [3] PyCrypto - "PyCrypto - The Python Cryptography Toolkit". <a href="https://www.dlitz.net/software/pycrypto/">https://www.dlitz.net/software/pycrypto/</a><br>
+   [4] pyHook - "A wrapper for global input hooks in Windows". <a href="http://www.lfd.uci.edu/~gohlke/pythonlibs/#pyhook">http://www.lfd.uci.edu/~gohlke/pythonlibs/#pyhook</a><br>
+   [5] pbkdf2 - "pbkdf2 1.3". <a href="https://pypi.python.org/pypi/pbkdf2">https://pypi.python.org/pypi/pbkdf2</a><br>
+   [6] psutil - "A cross-platform process and system utilities module for Python". <a href="https://code.google.com/p/psutil/">https://code.google.com/p/psutil/</a><br>
+   [7] JNA - "Java Native Access (JNA)". <a href="https://github.com/twall/jna#readme">https://github.com/twall/jna#readme</a><br>
+   [8] slowloris - "The low bandwidth, yet greedy and poisonous HTTP client!". <a href="http://ha.ckers.org/slowloris/">http://ha.ckers.org/slowloris/</a>
+</p>
+
+<p>
+    The remainder of the program (including the attacker's GUI and client, the malware itself, the relay server, and the installer) was written by us using the standard Python and Java libraries.
+</p>
+
+
+</body>
+</html>
