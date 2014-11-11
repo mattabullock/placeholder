@@ -1,11 +1,3 @@
-# -*- coding: utf-8 -*-
-
-
-'''
-TODO: Encrypt password using RSA and send it over network
-        with a new public key.
-'''
-
 import os, random, struct, string
 from Crypto.Cipher import AES
 from pbkdf2 import PBKDF2
