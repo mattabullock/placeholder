@@ -18,7 +18,7 @@ public class DescriptionPanel extends JPanel {
   private static final int FONT_SIZE = 18;
   
   private JLabel numClientsConnected;
-  private JLabel numClientsSelected;
+//  private JLabel numClientsSelected;
 
   
   public DescriptionPanel() {
@@ -28,13 +28,13 @@ public class DescriptionPanel extends JPanel {
     title.setFont(new Font(null, 0, FONT_SIZE * 3 / 2));
     numClientsConnected = new JLabel("0 clients connected");
     numClientsConnected.setFont(new Font(null, 0, FONT_SIZE));
-    numClientsSelected = new JLabel("0 clients selected");
-    numClientsSelected.setFont(new Font(null, 0, FONT_SIZE));
+//    numClientsSelected = new JLabel("0 clients selected");
+//    numClientsSelected.setFont(new Font(null, 0, FONT_SIZE));
 
 
     add(title);
     add(numClientsConnected);
-    add(numClientsSelected);
+//    add(numClientsSelected);
 
   }
 
@@ -52,10 +52,10 @@ public class DescriptionPanel extends JPanel {
   }
 
   public void numSelectedClients(int size) {
-    if (size == 1) {
-      numClientsSelected.setText("1 client selected");
-    } else {
-      numClientsSelected.setText(size + " clients selected");
-    }
+//    if (size == 1) {
+//      numClientsSelected.setText("1 client selected");
+//    } else {
+//      numClientsSelected.setText(size + " clients selected");
+//    }
   }
 }

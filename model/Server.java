@@ -58,8 +58,23 @@ public class Server {
   private static final String CIPHER_IMPLEMENTATION = "AES/ECB/NoPadding";
   // cipher key length in bytes
   private static final int KEY_LENGTH = 16;
-
-  private static final byte[] RELAY_SERVER_KEY = {0x40, 0x73, (byte)0x8a, (byte)0xc7, (byte)0x8f, 0x0f, (byte)0xd5, (byte)0xef, 0x02, 0x57, (byte)0xb2, (byte)0xe1, (byte)0x9b, (byte)0x83, 0x04, 0x15};
+  // some values need a cast because bytes in Java are always signed
+  private static final byte[] RELAY_SERVER_KEY = {0x40, 
+    0x73, 
+    (byte)0x8a, 
+    (byte)0xc7, 
+    (byte)0x8f, 
+    0x0f, 
+    (byte)0xd5, 
+    (byte)0xef, 
+    0x02, 
+    0x57, 
+    (byte)0xb2, 
+    (byte)0xe1, 
+    (byte)0x9b, 
+    (byte)0x83, 
+    0x04, 
+    0x15};
 
   private final Map<InetAddress, ClientConnection> clientsAndKeys;
   public final Set<InetAddress> selectedClients;
