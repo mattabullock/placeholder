@@ -69,10 +69,11 @@
     <li><a href="#sec3_3">3.3 Screenshots</a></li>
     <li><a href="#sec3_4">3.4 DDoS</a></li>
 </ul></li>
-<li><a href="#sec4">4. Security</a>
+<li><a href="#sec4">4. Message Relay Server
+<li><a href="#sec5">5. Security</a>
 <ul>
-    <li><a href="#sec3_1">4.1 Protocol</a></li>
-    <li><a href="#sec3_2">4.2 Encryption</a></li>
+    <li><a href="#sec5_1">5.1 Protocol</a></li>
+    <li><a href="#sec5_2">5.2 Encryption</a></li>
 </ul></li>
 <li><a href="#sec5">5. Conclusion</a></li>
 <li><a href="#sec6">6. References</a></li>
@@ -202,6 +203,11 @@
 
 <p>
     The Message Relay Server was created to act as an intermediary between the infected computer and the attacker. 
+    It is meant to be hosted on an external server, most likely owned by the attacker. 
+    For added security, it can be hosted behind a TOR network.
+    The Message Relay Server keeps track of all connections to infected and the associated AES keys.
+    When a client connects to the Message Relay Server, the server sends a list of IPs and their corresponding AES keys so the client is able to effectively communicate with the infected computers.
+    Every time a new computer is infected or disinfected, the server updates and sends out an update to all the connected clients.
 </p>
 
 <h2 id="sec5">
