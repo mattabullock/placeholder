@@ -46,13 +46,17 @@ class Packet:
     def rcvData(self,s,size):
         if size is 0:
             return ""
+        print "before: " + str(size)
+        size += 16 - size%16 if size%16 is not 0 else 0 
+        print "after: " + str(size)
         data = s.recv(size)
 	while len(data) < size:
 	    data += s.recv(size-len(data))
+        print ":".join("{:02x}".format(ord(c)) for c in data)
         return data
 
     def construct(self, sock):
-        debug = True
+        debug = False
         if debug: print self
         self.state = self.rcvTypeOfCommand(sock)
         if debug: print self
