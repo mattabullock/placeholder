@@ -80,8 +80,22 @@ class Packet:
     def decryptData(self,key):
         from Crypto.Cipher import AES
         cipher = AES.new(key,AES.MODE_ECB)
-        print cipher.decrypt(self.data)
+        self.data = cipher.decrypt(self.data)
 
+    def RSAEncryptData(self,key):
+        from Crypto.PublicKey import RSA
+        from Crypto.Cipher import PKCS1_OAEP
+        rsakey = RSA.importKey(key)
+        rsakey = PKCS1_OAEP.new(rsakey)
+        self.data = rsakey.encrypt(self.data)
+
+    def RSADecryptData(self,key):
+        from Crypto.PublicKey import RSA 
+        from Crypto.Cipher import PKCS1_OAEP 
+        from base64 import b64decode 
+        rsakey = RSA.importKey(key) 
+        rsakey = PKCS1_OAEP.new(rsakey) 
+        self.data = rsakey.decrypt(b64decode(self.data)) 
 
     def send(self,sock):
         sock.send(str(self))

