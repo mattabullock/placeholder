@@ -71,15 +71,17 @@
     <li><a href="#sec3_3">3.3 Screenshots</a></li>
     <li><a href="#sec3_4">3.4 DDoS</a></li>
 </ul></li>
-<li><a href="#sec4">4. Message Relay Server
-<li><a href="#sec5">5. Security</a>
+<li><a href="#sec4">4. Message Relay Server</a></li>
+<li><a href="#sec5">5. Attacker GUI</a></li>
+<li><a href="#sec6">6. Security</a></li>
 <ul>
-    <li><a href="#sec5_1">5.1 Protocol</a></li>
-    <li><a href="#sec5_2">5.2 Encryption</a></li>
+    <li><a href="#sec6_1">6.1 Protocol</a></li>
+    <li><a href="#sec6_2">6.2 Encryption</a></li>
 </ul></li>
-<li><a href="#sec6">6. Conclusion</a></li>
-<li><a href="#sec7">7. Source Code</a></li>
-<li><a href="#sec8">8. References</a></li>
+<li><a href="#sec7">7. Conclusion</a></li>
+<li><a href="#sec8">8. Source Code</a></li>
+<li><a href="#sec9">9. References</a></li>
+<li><a href="#sec10">10. List of Acronyms</a></li>
 </ul>
 
 <h2 id="sec1">1. Introduction</h2>
@@ -210,15 +212,30 @@
 </p>
 
 <h2 id="sec5">
-    5. Security
+    5. Attacker GUI
+</h2>
+
+<p>
+    The attacker connects to the relay server using a separate program.
+    He or she can select clients to send commands to using a GUI.
+    The advantage of separating the attacker from the relay server is that the attacker can operate from any location, and his or her IP is unknown.
+</p>
+
+<img src="fig_8.png" alt="Attacker GUI">
+<p class="figure-label">
+  Figure 8: View of the GUI the attacker uses to send commands to victims
+</p>
+
+<h2 id="sec6">
+    6. Security
 </h2>
 
 <p>
     We took several steps to prevent an infected computer from revealing the identity of the attacker, and the nature of communication between the attacker and victim.
 </p>
 
-<h3 id="sec5_1">
-    5.1 Protocol
+<h3 id="sec6_1">
+    6.1 Protocol
 </h3>
 
 <p>
@@ -228,8 +245,8 @@
     Knowing the IP address of the relay server is all a security analyst would be able to figure out by looking at the network traffic of an infected computer.
 </p>
 
-<h3 id="sec5_2">
-    5.2 Encryption
+<h3 id="sec6_2">
+    6.2 Encryption
 </h3>
 <p>
     All data sent across the network is encrypted using the Advanced Encryption Standard. 
@@ -237,12 +254,12 @@
     The attacker receives the encryption key when they connect to the Message Relay Server.
     The encryption key is encrypted when it's sent from the relay server to the attacker using AES and is encrypted and decrypted with a secret key that both the relay server and client have.
 </p>
-<img src="fig_8.png" alt="The data sent over the network is unreadable.">
+<img src="fig_9.png" alt="The data sent over the network is unreadable">
 <p class="figure-label">
-    Figure 8: The data sent across the network is unreadable due to AES encryption.
+    Figure 9: The data sent across the network is unreadable due to AES encryption.
 </p>
-<h2 id="sec6">
-    6. Conclusion
+<h2 id="sec7">
+    7. Conclusion
 </h2>
 
 <p>
@@ -253,8 +270,8 @@
     Overall, all we can do is to urge users to take security very seriously and to not install programs from unknown sources, even if they appear legitimate.
 </p>
 
-<h2 id="sec7">
-    7. References
+<h2 id="sec8">
+    8. References
 </h2>
 
 <p>
@@ -283,8 +300,8 @@
     </ul>
 </p>
 
-<h2 id="sec8">
-    8. References
+<h2 id="sec9">
+    9. References
 </h2>
 
 <p>
@@ -305,6 +322,27 @@
 <p>
     The remainder of the program (including the attacker's GUI and client, the malware itself, the relay server, and the installer) was written by us using the standard Python and Java libraries.
 </p>
+
+<h2 id="sec10">
+    10. List of Acronyms
+</h2>
+
+<dl>
+  <dt>AES</dt>
+  <dd>Advanced Encryption Standard</dd>
+  <dt>EC2</dt>
+  <dd>Elastic Compute Cloud</dd>
+  <dt>GUI</dt>
+  <dd>Graphical User Interface</dd>
+  <dt>HTTP</dt>
+  <dd>Hypertext Transfer Protocol</dd>
+  <dt>IP</dt>
+  <dd>Internet Protocol</dd>
+  <dt>PNG</dt>
+  <dd>Portable Network Graphics</dd>
+  <dt>UAC</dt>
+  <dd>???</dd>
+</dl>
 
 
 </body>

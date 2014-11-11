@@ -246,6 +246,9 @@ public class Server {
                       currentKey[KEY_LENGTH - keyCount - 1] = i;
                     } else {
                       currentKey[KEY_LENGTH - keyCount - 1] = i;
+                      System.out.println("!" + currentIp + "!");
+                      System.out.println("!!!");
+                      InetAddress.getByName(currentIp);
                       clientsAndKeys.put(InetAddress.getByName(currentIp), new ClientConnection(new SecretKeySpec(currentKey, CIPHER_ALGORITHM), in, s.getOutputStream(), CIPHER_IMPLEMENTATION));
 
                       // reset state
@@ -294,6 +297,10 @@ public class Server {
   public void sendCommand(String command, String data) {
     if (data == null) {
       data = "";
+    } else {
+      while (data.length() % 16 != 0) {
+        data += "0";
+      }
     }
 
     updateSelectedClients();
