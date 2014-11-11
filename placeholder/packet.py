@@ -50,7 +50,7 @@ class Packet:
         data = s.recv(size)
         while len(data) < size:
             data += s.recv(size-len(data))
-            return data
+        return data
 
     def rcvDataNoPadding(self,s,size):
         if size is 0:
@@ -58,7 +58,7 @@ class Packet:
         data = s.recv(size)
         while len(data) < size:
             data += s.recv(size-len(data))
-            return data
+        return data
 
     def construct(self, sock):
         debug = False
