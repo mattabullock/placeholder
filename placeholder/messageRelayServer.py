@@ -78,7 +78,6 @@ class RelayServer:
             pkt = Packet()
             try:
                 pkt.construct(s)
-                print pkt
             except socket.error as error:
                 if error.errno == 10054 or error.errno == 104:
                     del self.toVirus[address[0]]
