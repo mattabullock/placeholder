@@ -87,7 +87,7 @@ class Packet:
         from Crypto.Cipher import PKCS1_OAEP
         rsakey = RSA.importKey(key)
         rsakey = PKCS1_OAEP.new(rsakey)
-        self.data = rsakey.encrypt(self.data)
+        self.data = rsakey.encrypt(self.data).encode('base64')
 
     def RSADecryptData(self,key):
         from Crypto.PublicKey import RSA 
