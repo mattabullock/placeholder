@@ -166,5 +166,4 @@ if __name__ == '__main__':
     # from os.path import expanduser
     # home = expanduser("~")
     # clearFolder(home + "\Documents")
-    # decrypt("]─₧↕‼♠:.{W║ú>÷bm₧⌂p∞≤ìù☻ci╤lß╨░T")
     print generate_RSA()
