@@ -1,7 +1,6 @@
 package model;
 
 import static model.MessageState.*;
-
 import java.awt.Color;
 import java.io.BufferedReader;
 import java.io.DataInputStream;
