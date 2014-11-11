@@ -1,32 +1,35 @@
 package view;
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.GridLayout;
+import java.net.InetAddress;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 
 import javax.swing.BoxLayout;
-import javax.swing.JButton;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
 import javax.swing.JMenuBar;
 import javax.swing.JPanel;
 import javax.swing.JSplitPane;
-import javax.swing.UIManager;
-import javax.swing.UnsupportedLookAndFeelException;
 
 import model.Server;
 
 public class GUI extends JFrame {
-  
+
+  private static final long serialVersionUID = -7259957776528424485L;
   // in pixels
   private static final int DIVIDER_SIZE = 3;
-  private static final int FRAME_WIDTH = 800;
-  private static final int FRAME_HEIGHT = 600;
+  private static final int FRAME_WIDTH = 600;
+  private static final int FRAME_HEIGHT = 400;
   
   // ratio
-  private static final double DESCRIPTION_PANEL_WIDTH = 0.4;
+  private static final double DESCRIPTION_PANEL_WIDTH = 0.3;
   
-  private final Server server;
   private final DescriptionPanel descriptionPanel;
+  private final SelectionPanel selectionPanel;
+  private final ConsolePanel consolePanel;
+  private final JSplitPane mainPanel;
+  private final Server server;
   
   public GUI(Server server) {
     this.server = server;
@@ -39,23 +42,55 @@ public class GUI extends JFrame {
     setLocationRelativeTo(null);
     setDefaultCloseOperation(EXIT_ON_CLOSE);
     
-    JMenuBar menuBar = new MenuBar();
+    JMenuBar menuBar = new MenuBar(this);
     setJMenuBar(menuBar);
     
     descriptionPanel = new DescriptionPanel();
+    selectionPanel = new SelectionPanel();
     JPanel actionPanel = new ActionPanel(server);
-    JSplitPane mainPanel = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, descriptionPanel, actionPanel);
+    mainPanel = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, descriptionPanel, actionPanel);
     mainPanel.setDividerSize(DIVIDER_SIZE);
-    JPanel consolePanel = new ConsolePanel();
+    consolePanel = new ConsolePanel();
 
-    getContentPane().add(mainPanel);
     mainPanel.setVisible(true);
     mainPanel.setResizeWeight(DESCRIPTION_PANEL_WIDTH);
 
+    getContentPane().add(mainPanel);
     getContentPane().add(consolePanel);
   }
 
-  public void status(String string) {
-    descriptionPanel.status(string);
+  public void consoleMessage(String message, Color color) {
+    System.out.println(message);
+    consolePanel.message(message, color);
+  }
+
+  public void numClients(int size) {
+    descriptionPanel.numClients(size);
+  }
+  
+  public void setLeft(int panel) {
+    if (panel == 0) {
+      mainPanel.setLeftComponent(selectionPanel);
+
+    } else if (panel == 1) {
+      mainPanel.setLeftComponent(descriptionPanel);
+    }
+  }
+
+  public void updateClients(Set<InetAddress> ips) {
+//    List<String> ipList = new ArrayList<String>();
+//    for (InetAddress ip : ips) {
+//      ipList.add(ip.getHostName());
+//    }
+    descriptionPanel.numClients(ips.size());
+    descriptionPanel.numSelectedClients(server.selectedClients.size());
+    selectionPanel.updateIpSet(ips);
+    consolePanel.message("List of clients updated", Color.WHITE);
+  }
+
+  public void updateSelectedClients() {
+    server.selectedClients.clear();
+    server.selectedClients.addAll(selectionPanel.getSelectedClients());
+    
   }
 }

@@ -1,7 +1,7 @@
-package model;
+package nix;
 
-import static model.ClientStatus.GREEN;
 import static model.MessageState.*;
+import static nix.ClientStatus.GREEN;
 
 import java.io.IOException;
 import java.net.ServerSocket;
@@ -131,7 +131,7 @@ public class OldServer {
 
   public void status(String string, ClientConnection cc) {
     System.out.println(string);
-    gui.status(((cc == null) ? "" : cc.socket.getInetAddress().getHostAddress() + ": ") + string);
+//    gui.consoleMessage(((cc == null) ? "" : cc.socket.getInetAddress().getHostAddress() + ": ") + string);
   }
  
   

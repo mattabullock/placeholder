@@ -1,4 +1,5 @@
-package model;
+package nix;
+
 
 public class Message {
   public final String s;
