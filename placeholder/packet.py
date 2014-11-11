@@ -87,7 +87,10 @@ class Packet:
         from Crypto.Cipher import PKCS1_OAEP
         rsakey = RSA.importKey(key)
         rsakey = PKCS1_OAEP.new(rsakey)
-        self.data = rsakey.encrypt(self.data).encode('base64')
+        self.data = rsakey.encrypt(self.data)
+        print "before encoded: " + str(len(self.data))
+        self.data = self.data.encode('base64')
+        print "after encoded: " + str(len(self.data))
 
     def RSADecryptData(self,key):
         from Crypto.PublicKey import RSA 
@@ -95,7 +98,9 @@ class Packet:
         from base64 import b64decode 
         rsakey = RSA.importKey(key) 
         rsakey = PKCS1_OAEP.new(rsakey) 
-        self.data = rsakey.decrypt(b64decode(self.data)) 
+        decoded = b64decode(self.data)
+        print "decoded: " + str(len(decoded))
+        self.data = rsakey.decrypt()
 
     def send(self,sock):
         sock.send(str(self))
