@@ -101,7 +101,7 @@ class Packet:
         print "before decoded: " + self.data
         decoded = b64decode(self.data)
         print "decoded: " + str(decoded)
-        self.data = rsakey.decrypt()
+        self.data = rsakey.decrypt(decoded)
 
     def send(self,sock):
         sock.send(str(self))
