@@ -120,9 +120,9 @@ class Client:
         pkt.state = '100'
         pkt.toIP = ''
         pkt.returnIP = 'MRS'
-        pkt.length = len(self.key)
         pkt.data = self.key
         pkt.RSAEncryptData(self.RSAPublicKey)
+        pkt.length = len(self.data)
         self.messageQ.put(pkt)
 
     def enqueue(self,pkt):
