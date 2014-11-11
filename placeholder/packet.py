@@ -52,11 +52,18 @@ class Packet:
         return data
 
     def construct(self, sock):
+        debug = True
+        if debug: print self
         self.state = self.rcvTypeOfCommand(sock)
+        if debug: print self
         self.toIP = self.rcvIP(sock)
+        if debug: print self
         self.returnIP = self.rcvIP(sock)
+        if debug: print self
         self.length = self.rcvSizeOfCommand(sock)
+        if debug: print self
         self.data = self.rcvData(sock,self.length)
+        if debug: print self
 
     def padData(self):
         import os
