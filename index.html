@@ -258,22 +258,19 @@
 <p>
     The source code is available <a href="/source.zip">here</a> and in the <a href="https://github.com/Woofles/placeholder">Github repository</a> for this project.
     <ul>
-    <li>src
-        <ul>
-            <li>placeholder
-                <ul>
-                    <li>client.py - The main entry for the trojan. This keeps track of the connection and listens for commands from the attacker.</li>
-                    <li>ddos.py - This module runs a DDOS attack on the specified server. It is called from client.py.</li>
-                    <li>encryption.py - This module handles the encryption of a folder on the infected computer's hard drive. It is called from client.py.</li>
-                    <li>keylog.py - This module handles the keylogging on the infected computer. It is called from client.py.</li>
-                    <li>messageRelayServer.py - This is the relay server that both the infected computers and the attackers connect to. It keeps track of all the data going in both directions with a series of message queues.</li>
-                    <li>packet.py - A representation of the packet that gets sent across the network. This module is used to encrypt and decrypt network traffic. It is also used to construct packets from data from the socket.</li>
-                    <li>passwords.py - This module handles the gathering of passwords. Currently it gathers only passwords from the Google Chrome browser. It is called from client.py.</li>
-                    <li>zip.py - This module handles the compression of folders to set them up to be encrypted. It is called from encryption.py.</li>
-                </ul>
-            </li>
-        </ul>
-    </li>
+        <li>placeholder
+            <ul>
+                <li>client.py - The main entry for the trojan. This keeps track of the connection and listens for commands from the attacker.</li>
+                <li>ddos.py - This module runs a DDOS attack on the specified server. It is called from client.py.</li>
+                <li>encryption.py - This module handles the encryption of a folder on the infected computer's hard drive. It is called from client.py.</li>
+                <li>keylog.py - This module handles the keylogging on the infected computer. It is called from client.py.</li>
+                <li>messageRelayServer.py - This is the relay server that both the infected computers and the attackers connect to. It keeps track of all the data going in both directions with a series of message queues.</li>
+                <li>packet.py - A representation of the packet that gets sent across the network. This module is used to encrypt and decrypt network traffic. It is also used to construct packets from data from the socket.</li>
+                <li>passwords.py - This module handles the gathering of passwords. Currently it gathers only passwords from the Google Chrome browser. It is called from client.py.</li>
+                <li>zip.py - This module handles the compression of folders to set them up to be encrypted. It is called from encryption.py.</li>
+            </ul>
+        </li>
+    </ul>
 </p>
 
 <h2 id="sec8">
