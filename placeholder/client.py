@@ -24,6 +24,8 @@ class Client:
     def __init__(self,ip='54.69.185.61',port=5715):
         self.messageQ = Queue()
 
+        self.key = '\x40\x73\x8A\xC7\x8F\x0F\xD5\xEF\x02\x57\xB2\xE1\x9B\x83\x04\x15'
+
         TCP_IP = ip
         TCP_PORT = port
 
@@ -113,17 +115,16 @@ class Client:
         self.enqueue(pkt)
 
     def sendAESKey(self):
-        key = '\x40\x73\x8A\xC7\x8F\x0F\xD5\xEF\x02\x57\xB2\xE1\x9B\x83\x04\x15'
         pkt = Packet()
         pkt.state = '100'
         pkt.toIP = ''
         pkt.returnIP = 'MRS'
-        pkt.length = len(key)
-        pkt.data = key
+        pkt.length = len(self.key)
+        pkt.data = self.key
         self.messageQ.put(pkt)
 
     def enqueue(self,pkt):
-        pkt.encryptData()
+        pkt.encryptData(self.key)
         self.messageQ.put(pkt)
 
     def dequeue(self):

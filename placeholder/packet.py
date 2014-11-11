@@ -73,7 +73,12 @@ class Packet:
         import os
         while len(self.data)%16 is not 0:
             self.data += '\x0a'
-        print len(self.data)%16
+
+    def encryptData(self,key):
+        from Crypto.Cipher import AES
+        cipher = AES.new(key,AES.MODE_ECB)
+        self.padData()
+        self.data = cipher.encrypt(self.data)
 
 
     def send(self,sock):
