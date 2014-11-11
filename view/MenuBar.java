@@ -1,9 +1,7 @@
 package view;
-import java.awt.Color;
+
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
@@ -12,26 +10,11 @@ import javax.swing.JMenuItem;
 public class MenuBar extends JMenuBar {
 
   private static final long serialVersionUID = 3072752201438498748L;
-  private JMenu commandMenu, computerMenu;
+  private JMenu computerMenu;
 
 
   public MenuBar(final GUI gui) {
-//    commandMenu = new JMenu("Commands");
     computerMenu = new JMenu("Computers");
-    
-//    commandMenu.addMouseListener(new MouseAdapter() {
-//      @Override
-//      public void mouseClicked(MouseEvent e) {
-//        System.out.println(e);
-//      }
-//    });
-    
-//    computerMenu.addMouseListener(new MouseAdapter() {
-//      @Override
-//      public void mouseClicked(MouseEvent e) {
-//        System.out.println("menu");
-//      }
-//    });
     
     JMenuItem selectComputers = new JMenuItem("Select computers");
     selectComputers.addActionListener(new ActionListener() {
@@ -51,8 +34,6 @@ public class MenuBar extends JMenuBar {
     
     computerMenu.add(selectComputers);
     computerMenu.add(viewComputers);
-    
-//    add(commandMenu);
 
     add(computerMenu);
   }

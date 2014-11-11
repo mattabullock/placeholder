@@ -2,8 +2,6 @@ package view;
 
 import java.awt.Color;
 import java.awt.Font;
-import java.net.InetAddress;
-import java.util.Set;
 
 import javax.swing.BoxLayout;
 import javax.swing.JLabel;
@@ -31,11 +29,9 @@ public class DescriptionPanel extends JPanel {
 //    numClientsSelected = new JLabel("0 clients selected");
 //    numClientsSelected.setFont(new Font(null, 0, FONT_SIZE));
 
-
     add(title);
     add(numClientsConnected);
 //    add(numClientsSelected);
-
   }
 
   public void status(String string) {

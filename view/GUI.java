@@ -1,9 +1,7 @@
 package view;
+
 import java.awt.Color;
-import java.awt.Dimension;
 import java.net.InetAddress;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Set;
 
 import javax.swing.BoxLayout;
@@ -78,10 +76,6 @@ public class GUI extends JFrame {
   }
 
   public void updateClients(Set<InetAddress> ips) {
-//    List<String> ipList = new ArrayList<String>();
-//    for (InetAddress ip : ips) {
-//      ipList.add(ip.getHostName());
-//    }
     descriptionPanel.numClients(ips.size());
     descriptionPanel.numSelectedClients(server.selectedClients.size());
     selectionPanel.updateIpSet(ips);
@@ -90,7 +84,6 @@ public class GUI extends JFrame {
 
   public void updateSelectedClients() {
     server.selectedClients.clear();
-    server.selectedClients.addAll(selectionPanel.getSelectedClients());
-    
+    server.selectedClients.addAll(SelectionPanel.getSelectedClients());
   }
 }

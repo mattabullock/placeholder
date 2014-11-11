@@ -1,11 +1,7 @@
-import java.io.IOException;
-
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
-import view.GUI;
 import model.Server;
-
 
 public class Placeholder {
   public static void main(String[] args) {

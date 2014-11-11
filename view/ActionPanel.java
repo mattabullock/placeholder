@@ -4,10 +4,8 @@ import java.awt.Color;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.BufferedReader;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.Scanner;
 
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
@@ -91,7 +89,7 @@ public class ActionPanel extends JPanel {
       }
     });
 
-    JButton dos = new JButton("DOS");
+    JButton dos = new JButton("DDoS");
     dos.addMouseListener(new MouseAdapter() {
       @Override
       public void mouseClicked(MouseEvent e) {
