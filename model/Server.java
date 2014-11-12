@@ -1,6 +1,7 @@
 package model;
 
 import static model.MessageState.*;
+
 import java.awt.Color;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -16,6 +17,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+
 import javax.crypto.Cipher;
 import javax.crypto.CipherInputStream;
 import javax.crypto.CipherOutputStream;
@@ -205,8 +207,8 @@ public class Server {
                 consoleMessage("Protocol error: expecting 0-9 for state WAITING_FOR_LENGTH, got: " + character + " " + (char)character, Color.RED);
               }
             } else if (state == RECEIVING_DATA) {
-              length = cin.read(bytes, offset, messageLength - offset);
-
+              length = cin.read(bytes, offset, messageLength - offset); // TODO: 000000000
+//              System.out.println(offset);
               try {
                 fos.write(bytes, offset, length);
               } catch (FileNotFoundException e) {
@@ -217,10 +219,24 @@ public class Server {
 
               offset += length;
               if (offset >= bytes.length) {
+                state = NORMAL;
+
+                System.out.println(messageLength + " " + offset);
+                // finish reading padding bytes
+                if (messageLength % 16 != 0) {
+                  for (int i = 0; i < 16 - (messageLength % 16); ++i) {
+                    cin.read();
+//                    System.out.println(cin.read());
+//                    if (cin.read() != 10) {
+//                      state = GETTING_TYPE;// TODO: 000000000
+//                      break;
+//                    }
+                  }
+                }
+                cin = null;
                 fos.close();
                 consoleMessage("Finished receiving data from " + toIp, Color.WHITE);
                 // reset state
-                state = NORMAL;
                 messageLength = 0;
                 messageType = 0;
                 toIp = "";
@@ -246,10 +262,7 @@ public class Server {
                       currentKey[KEY_LENGTH - keyCount - 1] = i;
                     } else {
                       currentKey[KEY_LENGTH - keyCount - 1] = i;
-                      System.out.println("!" + currentIp + "!");
-                      System.out.println("!!!");
-                      InetAddress.getByName(currentIp);
-                      clientsAndKeys.put(InetAddress.getByName(currentIp), new ClientConnection(new SecretKeySpec(currentKey, CIPHER_ALGORITHM), in, s.getOutputStream(), CIPHER_IMPLEMENTATION));
+                      clientsAndKeys.put(InetAddress.getByName(currentIp.trim()), new ClientConnection(new SecretKeySpec(currentKey, CIPHER_ALGORITHM), in, s.getOutputStream(), CIPHER_IMPLEMENTATION));
 
                       // reset state
                       currentIp = "";
@@ -268,6 +281,13 @@ public class Server {
                 gui.updateClients(clientsAndKeys.keySet());
                 updateSelectedClients();
 
+                // read in remaining padding bytes
+                if (ipList.length % 16 != 0) {
+                  for (int i = 0; i < 16 - (ipList.length % 16); ++i) {
+                    relayServerCipherInputStream.read();
+                  }
+                }
+                
                 // reset state
                 state = NORMAL;
                 messageLength = 0;
@@ -295,16 +315,22 @@ public class Server {
   }
 
   public void sendCommand(String command, String data) {
+    String padding = "";
     if (data == null) {
       data = "";
     } else {
-      while (data.length() % 16 != 0) {
-        data += "0";
+      while ((data.length() + padding.length()) % 16 != 0) {
+        padding += "0";
       }
     }
 
     updateSelectedClients();
     for (InetAddress i : selectedClients) {
+//      try {
+//        Thread.sleep(300);
+//      } catch (InterruptedException e) {
+//        e.printStackTrace();
+//      }
       try {
         out.write("!" + command + "!" + i.getHostAddress() + "!" + "" + "!" + data.length() + "!");
         out.flush();
@@ -312,6 +338,7 @@ public class Server {
         if (!data.isEmpty()) {
           cout = clientsAndKeys.get(i).cout;
           cout.write(data.getBytes());
+          cout.write(padding.getBytes());
           cout.flush();
         }
         System.out.println("!" + command + "!" + i.getHostAddress() + "!" + InetAddress.getLocalHost().getHostAddress() + "!" + data.length() + "!" + data);

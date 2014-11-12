@@ -2,7 +2,6 @@ package view;
 
 import java.awt.Font;
 import java.net.InetAddress;
-import java.net.UnknownHostException;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
@@ -34,16 +33,6 @@ public class SelectionPanel extends JPanel {
     ips = new HashSet<InetAddress>();
     
     Set<InetAddress> set = new HashSet<InetAddress>();
-    try {
-      set.add(InetAddress.getByName("12.34.56.78"));
-      set.add(InetAddress.getByName("1.34.56.78"));
-      set.add(InetAddress.getByName("12.3.56.78"));
-      set.add(InetAddress.getByName("12.34.5.78"));
-      set.add(InetAddress.getByName("12.34.56.7"));
-
-    } catch (UnknownHostException e) {
-      e.printStackTrace();
-    }
     updateIpSet(set);
   }
   

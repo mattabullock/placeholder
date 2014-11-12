@@ -23,6 +23,7 @@ public class ConsolePanel extends JPanel {
     console = new JTextPane();
     console.setCaretColor(TEXT_COLOR);
     JScrollPane scroll = new JScrollPane(console);
+//    scroll.setA
     console.setForeground(TEXT_COLOR);
     console.setBackground(BACKGROUND_COLOR);
     console.setText("");
@@ -43,5 +44,6 @@ public class ConsolePanel extends JPanel {
     } catch(Exception e) { 
       e.printStackTrace();
     }
+    console.setCaretPosition(console.getDocument().getLength());
   }
 }

