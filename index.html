@@ -70,7 +70,8 @@
     <li><a href="#sec3_1">3.1 Password Theft</a></li>
     <li><a href="#sec3_2">3.2 Keylogger</a></li>
     <li><a href="#sec3_3">3.3 Screenshots</a></li>
-    <li><a href="#sec3_4">3.4 DDoS</a></li>
+    <li><a href="#sec3_4">3.3 Encryption of Files</a></li>
+    <li><a href="#sec3_5">3.4 DDoS</a></li>
 </ul></li>
 <li><a href="#sec4">4. Message Relay Server</a></li>
 <li><a href="#sec5">5. Attacker GUI</a></li>
@@ -137,14 +138,14 @@
 <p>
     Regardless of what the user does at this point the Trojan will be installed.
     If they click the "x" to close the window, hit cancel or hit install, the installer will download the Trojan. 
-    The installer will then run the executable file that was downloaded as administrator and schedule it as a process to run as administrator at startup. 
+    The installer will then run the executable file that was downloaded with administrator privileges and schedule it as a process to run with those privileges at startup. 
     The executable file that was downloaded and run is named "svchost.exe", which is a very common program to have running on a Windows computer, helping us hide it from the user.
 </p>
 <h2 id="sec3">3. What The Trojan Does</h2>
 
 <p>
     Our program, once on a victim's computer, will communicate with the attacker via a relay server.
-    The attacker can issue various commands, such as harvesting the user's Chrome passwords, taking a screen capture, and logging keystrokes.
+    The attacker can issue various commands, such as harvesting the user's Chrome passwords, logging keystrokes, taking a screen capture, encrypting files, and DDoSing a server.
 </p>
 
 <h3 id="sec3_1">3.1 Password Theft</h3>
@@ -157,10 +158,10 @@
 </p>
 
     <ol>
-    <li>First it kills all processes with the name "chrome.exe". It does this to unlock the database so the Trojan can then call read functions on it.</li>
-    <li>Next it opens the database and pulls all the data from it.</li> 
+    <li>First, it kills all processes with the name "chrome.exe". It does this to unlock the database so the Trojan can then call read functions on it.</li>
+    <li>Next, it opens the database and pulls all the data from it.</li> 
     <li>It calls the CryptUnprotectData function from the pywin32<a href="#citations"><sup>[1]</sup></a> library on the encrypted password which returns the password in plaintext.</li>
-    <li>Lastly it creates a packet containing this data and sends it back to the attacker that originally asked for the information.</li>
+    <li>Lastly, it creates a packet containing this data and sends it back to the attacker that originally asked for the information.</li>
     </ol>
 
 <p>
@@ -187,9 +188,22 @@
     The data is automatically saved to an image file on the attacker's computer indicating the time and IP address of the victim.
 </p>
 
-<h3 id="sec3_4">
-    3.4 DDoS
-</h3>
+<h3 id="sec3_4">3.4 Encryption of Files</h3>
+
+<p>
+    When the attacker sends the signal to encrypt files on the server, the Trojan locates the Documents folder for the logged in user. 
+    It then compresses this folder into a zip file so it can be encrypted. 
+    After the folder has been compressed, the original folder is deleted and the compressed file is encrypted using AES with a 128 bit key.
+    When the encryption is finished, the compressed file is deleted.
+    The key used to encrypt the folder is then sent to the attacker where the attacker can store it.
+</p>
+
+<p>
+    Whenever the attacker chooses, they can send the command to decrypt the files.
+    The attacker's client will send the key back to the infected computer where the computer will decrypt the file.
+</p>
+
+<h3 id="sec3_5">3.5 DDoS</h3>
 
 <p>
     The attacker can target the IP address and port number of a host to be attacked by a DDoS tool based on the slowloris<a href="#citations"><sup>[8]</sup></a>  exploit.
@@ -207,7 +221,7 @@
     It is meant to be hosted on an external server, most likely owned by the attacker.
     Our relay server is hosted on an Amazon EC2 instance.
     For added security, it can be hosted behind a TOR network.
-    The relay server keeps track of all connections to infected and the associated AES keys.
+    The relay server keeps track of all connections to infected computers and the associated AES keys.
     When a client connects to the relay server, the server sends a list of IPs and their corresponding AES keys so the client is able to effectively communicate with the infected computers.
     Every time a new computer is infected or disinfected, the server updates and sends out an update to all the connected clients.
 </p>
