@@ -45,8 +45,9 @@ class Loris:
         print "ending attack..."
         self.end = True
 
-    def checkConnections(self):
-        print self.activeConnections
+    def status(self):
+        print "The attack on " + str(self.addr) + " on port " + str(self.port) \
+        + " currently has " + str(self.activeConnections) + " active connections."
 
     """
     Determine the timeout to be used from this host to the
