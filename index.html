@@ -271,16 +271,16 @@
 </p>
 
 <h2 id="sec8">
-    8. References
+    8. Source Code
 </h2>
 
 <p>
     The source code is available <a href="/source.zip">here</a> and in the <a href="https://github.com/Woofles/placeholder">Github repository</a> for this project.
     <ul>
-        <li>placeholder
+        <li>Placeholder
             <ul>
                 <li>client.py - The main entry for the trojan. This keeps track of the connection and listens for commands from the attacker.</li>
-                <li>ddos.py - This module runs a DDOS attack on the specified server. It is called from client.py.</li>
+                <li>ddos.py - This module runs a DDoS attack on the specified server. It is called from client.py.</li>
                 <li>encryption.py - This module handles the encryption of a folder on the infected computer's hard drive. It is called from client.py.</li>
                 <li>keylog.py - This module handles the keylogging on the infected computer. It is called from client.py.</li>
                 <li>messageRelayServer.py - This is the relay server that both the infected computers and the attackers connect to. It keeps track of all the data going in both directions with a series of message queues.</li>
@@ -289,12 +289,40 @@
                 <li>zip.py - This module handles the compression of folders to set them up to be encrypted. It is called from encryption.py.</li>
             </ul>
         </li>
-        <li>client
+        <li>Client
             <ul>
             </ul>
         </li>
-        <li>installer
+        <li>Installer
             <ul>
+                <li>gui
+                    <ul>
+                        <li>ErrorPrinter.java - This class is used to print error messages in the event of unexpected behavior.  On the command line, this will be printed directly to stdout; otherwise, a dialog box will be presented.</li>
+                        <li>GUI.java - This is the central hub for all UI related logic, and comprises a JFrame into which different JPanels will be inserted (see below) and the relevant logic for updating the UI as the program executes. If the window is closed before the download has been completed, it will continue silently--program execution only halts once all files have been downloaded and the window has been closed.</li>
+                        <li>Install.java - Extends JPanel and is displayed during the download.  The top progress bar shows the progress of the file currently being downloaded, the bottom bar shows overall progress, and a JLabel above both indicates which file is being downloaded at that time</li>
+                        <li>PostInstall.java - Extends JPanel and is displayed after all files have been downloaded.  This panel mimics the appearance of the actual Java updater, including functional links behaviorally identical to the legitimate software.</li>
+                        <li>PreInstall.java - Extends JPanel and is displayed before the download begins.  Clicking any button on this page will start the installation, although the window may be closed if that is the behavior that the user expects.  The links on this installer function identically to those in the actual updater.</li>
+                    </ul>
+                </li>
+                <li>main
+                    <ul>
+                        <li>DownloaderMain.java - Contains the main method for the installer.  Upon execution, this will request elevated privileges (using Elevator--see below) and spawn the GUI.  The class also contains support code for communication between the UI and the download logic.</li>
+                        <li>UploaderMain.java - Contatins the main method for the uploader.  This opens a socket on port 5723; upon connection, a new Uploader is created (in its own thread) to handle the connection.
+                    </ul>
+                </li>
+                <li>network
+                    <ul>
+                        <li>Downloader.java - Contains the logic for downloading files.  If a file has a .exe extension, BootScheduler will be invoked (see below)</li>
+                        <li>Uploader.java - Contains the logic for uploading files</li>
+                    </ul>
+                </li>
+                <li>win32
+                    <ul>
+                        <li>BootScheduler.java - This file runs the 'schtasks' command to schedule a specified executable file to be run at the logon of any user.  Once this has been done, the file is executed (such that any host that installs an executable will be infected immediately and not on next logon)</li>
+                        <li>Elevator.java - Sourced largely from <a href="http://stackoverflow.com/questions/11041509/elevating-a-processbuilder-process-via-uac">this</a> stackoverflow answer.  This class is used in tandem with Shell32X (see below) to grant elevated privileges to a process (in this case, the installer itself).</li>
+                        <li>Shell32X.java - Sourced largely from <a href="http://stackoverflow.com/questions/11041509/elevating-a-processbuilder-process-via-uac">this</a> stackoverflow answer.  This class utilizes the JNA<a href="#citations"><sup>[7]</sup></a> library to allow the win32 ShellExecute command to be executed.</li>
+                    </ul>
+                </li>
             </ul>
         </li>
     </ul>
@@ -338,12 +366,13 @@
   <dd>Hypertext Transfer Protocol</dd>
   <dt>IP</dt>
   <dd>Internet Protocol</dd>
+  <dt>JNA</dt>
+  <dd>Java Native Access</dd>
   <dt>PNG</dt>
   <dd>Portable Network Graphics</dd>
   <dt>UAC</dt>
-  <dd>???</dd>
+  <dd>User Access Control</dd>
 </dl>
-
 
 </body>
 </html>
