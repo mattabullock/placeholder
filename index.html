@@ -186,9 +186,22 @@
     The data is automatically saved to an image file on the attacker's computer indicating the time and IP address of the victim.
 </p>
 
-<h3 id="sec3_4">
-    3.4 DDoS
-</h3>
+<h3 id="sec3_4">3.4 Encryption of Files</h3>
+
+<p>
+    When the attacker sends the signal to encrypt files on the server, the Trojan locates the Documents folder for the logged in user. 
+    It then compresses this folder into a zip file so it can be encrypted. 
+    After the folder has been compressed, the original folder is deleted and the compressed file is encrypted using AES with a 128 bit key.
+    When the encryption is finished, the compressed file is deleted.
+    The key used to encrypt the folder is then sent to the attacker where the attacker can store it.
+</p>
+
+<p>
+    Whenever the attacker chooses, they can send the command to decrypt the files.
+    The attacker's client will send the key back to the infected computer where the computer will decrypt the file.
+</p>
+
+<h3 id="sec3_5">3.5 DDoS</h3>
 
 <p>
     The attacker can target the IP address and port number of a host to be attacked by a DDoS tool based on the slowloris<a href="#citations"><sup>[8]</sup></a>  exploit.
