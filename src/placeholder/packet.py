@@ -88,10 +88,10 @@ class Packet:
         self.padData()
         self.data = cipher.encrypt(self.data)
 
-    def decryptData(self,key):
+    def decryptData(self,length,key):
         from Crypto.Cipher import AES
         cipher = AES.new(key,AES.MODE_ECB)
-        self.data = cipher.decrypt(self.data)
+        self.data = cipher.decrypt(self.data)[:length]
 
     def RSAEncryptData(self,key):
         from Crypto.PublicKey import RSA

