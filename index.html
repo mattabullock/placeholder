@@ -215,11 +215,16 @@
 <p>
     The Message Relay Server was created to act as an intermediary between the infected computer and the attacker. 
     It is meant to be hosted on an external server, most likely owned by the attacker.
+    When a client connects to the relay server, the server sends a list of IPs and their corresponding AES keys so the client is able to effectively communicate with the infected computers.
+    Every time a new computer is infected or disinfected, the server updates and sends out an update to all the connected clients.
+    Each client and infected computer has an outgoing queue on the message relay server.
+    The relay server pulls from each incoming socket (receiving a message from the client or infected computer) and then checks to see where the message is going.
+    It then queues the message in the proper outgoing queue and eventually sends the message to the appropriate computer.
+    Each queue has a separate thread so all the work is asynchronous, optimizing the speed of the server.
+    <br>
     Our relay server is hosted on an Amazon EC2 instance.
     For added security, it can be hosted behind a TOR network.
     The relay server keeps track of all connections to infected computers and the associated AES keys.
-    When a client connects to the relay server, the server sends a list of IPs and their corresponding AES keys so the client is able to effectively communicate with the infected computers.
-    Every time a new computer is infected or disinfected, the server updates and sends out an update to all the connected clients.
 </p>
 
 <h2 id="sec5">
